@@ -1,29 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Events.Data.Entities;
+namespace Events.Data.Models;
 
 public partial class Ticket
 {
-    public Guid Id { get; set; }
+    public int TicketId { get; set; }
 
-    public DateTime Date { get; set; }
+    public string Code { get; set; } = null!;
 
     public string Qrcode { get; set; } = null!;
 
-    public string Description { get; set; } = null!;
-
-    public Guid OrderDetailId { get; set; }
-
-    public bool IsDeleted { get; set; }
+    public int OrderDetailId { get; set; }
 
     public DateTime CreatedDate { get; set; }
 
-    public DateTime? UpdatedDate { get; set; }
-
-    public Guid CreatedBy { get; set; }
-
-    public Guid UpdatedBy { get; set; }
+    public string Status { get; set; } = null!;
 
     public virtual OrderDetail OrderDetail { get; set; } = null!;
 }
