@@ -1,37 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Events.Data.Entities;
+namespace Events.Data.Models;
 
 public partial class Order
 {
-    public Guid Id { get; set; }
+    public int OrderId { get; set; }
 
     public string Code { get; set; } = null!;
 
-    public decimal TotalAmount { get; set; }
+    public string? Description { get; set; }
 
-    public string Description { get; set; } = null!;
+    public int TicketQuantity { get; set; }
 
-    public DateTime PaymentDate { get; set; }
+    public int TotalAmount { get; set; }
 
     public string PaymentStatus { get; set; } = null!;
+
+    public DateTime PaymentDate { get; set; }
 
     public string PaymentMethod { get; set; } = null!;
 
     public string Status { get; set; } = null!;
 
-    public Guid CustomerId { get; set; }
-
-    public bool IsDeleted { get; set; }
-
-    public DateTime CreatedDate { get; set; }
-
-    public DateTime? UpdatedDate { get; set; }
-
-    public Guid CreatedBy { get; set; }
-
-    public Guid UpdatedBy { get; set; }
+    public int CustomerId { get; set; }
 
     public virtual Customer Customer { get; set; } = null!;
 
