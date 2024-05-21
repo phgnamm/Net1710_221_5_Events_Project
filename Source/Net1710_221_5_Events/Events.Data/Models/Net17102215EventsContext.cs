@@ -64,6 +64,7 @@ public partial class Net17102215EventsContext : DbContext
             entity.Property(e => e.Location).HasMaxLength(500);
             entity.Property(e => e.Name).HasMaxLength(250);
             entity.Property(e => e.OperatorName).HasMaxLength(250);
+            entity.Property(e => e.IsDelete).HasDefaultValue(false);
         });
 
         modelBuilder.Entity<Order>(entity =>
