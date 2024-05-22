@@ -1,4 +1,5 @@
-﻿using Events.Data.DAO;
+﻿using Events.Business.Base;
+using Events.Data.DAO;
 using Events.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -7,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Events.Business
+namespace Events.Business.Business
 {
 
     public interface IOrderDetailBusiness
