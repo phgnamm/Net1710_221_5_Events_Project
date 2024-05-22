@@ -29,5 +29,7 @@ public partial class Event
 
     public string OperatorName { get; set; } = null!;
 
+    public bool IsDelete { get; set; } = false;
+
     public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
 }
