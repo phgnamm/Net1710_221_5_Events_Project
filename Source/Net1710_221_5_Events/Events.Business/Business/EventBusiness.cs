@@ -1,10 +1,12 @@
 ﻿using Events.Business.Base;
+using Events.Common;
 using Events.Data.DAO;
 using Events.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -34,8 +36,8 @@ namespace Events.Business.Business
                 await _DAO.CreateAsync(newEvent);
                 return new EventsAppResult
                 {
-                    Status = 200,
-                    Message = "Add event success",
+                    Status = Const.SUCCESS_CREATE_CODE,
+                    Message = Const.SUCCESS_CREATE_MSG,
                     Data = newEvent
                 };
             }
@@ -43,8 +45,8 @@ namespace Events.Business.Business
             {
                 return new EventsAppResult
                 {
-                    Status = 400,
-                    Message = "Add event error: " + ex,
+                    Status = Const.ERROR_EXCEPTION,
+                    Message = ex.ToString(),
                 };
             }
 
@@ -54,34 +56,27 @@ namespace Events.Business.Business
         {
             try
             {
-                var existEvent = await _DAO.GetByIdAsync(id);
-                if (existEvent == null)
+                var currency = await _DAO.GetByIdAsync(id);
+                if (currency != null)
                 {
-                    return new EventsAppResult
+                    var result = await _DAO.RemoveAsync(currency);
+                    if (result)
                     {
-                        Status = 404,
-                        Message = "Not found"
-                    };
+                        return new EventsAppResult(Const.SUCCESS_DELETE_CODE, Const.SUCCESS_DELETE_MSG);
+                    }
+                    else
+                    {
+                        return new EventsAppResult(Const.FAIL_DELETE_CODE, Const.FAIL_DELETE_MSG);
+                    }
                 }
-                // edit info event
-                existEvent.IsDelete = true;
-
-                // save event
-                await _DAO.UpdateAsync(existEvent);
-
-                return new EventsAppResult
+                else
                 {
-                    Status = 200,
-                    Message = "Delete event success",
-                };
+                    return new EventsAppResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA__MSG);
+                }
             }
             catch (Exception ex)
             {
-                return new EventsAppResult
-                {
-                    Status = 400,
-                    Message = "Delete event error: " + ex,
-                };
+                return new EventsAppResult(-4, ex.ToString());
             }
         }
 
@@ -94,14 +89,14 @@ namespace Events.Business.Business
                 {
                     return new EventsAppResult
                     {
-                        Status = 404,
-                        Message = "Not found"
+                        Status = Const.WARNING_NO_DATA_CODE,
+                        Message = Const.WARNING_NO_DATA__MSG,
                     };
                 }
                 return new EventsAppResult
                 {
-                    Status = 200,
-                    Message = "Get events success",
+                    Status = Const.SUCCESS_READ_CODE,
+                    Message = Const.SUCCESS_READ_MSG,
                     Data = events.ToList()
                 };
             }
@@ -109,8 +104,8 @@ namespace Events.Business.Business
             {
                 return new EventsAppResult
                 {
-                    Status = 400,
-                    Message = "Get list event error: " + ex,
+                    Status = Const.ERROR_EXCEPTION,
+                    Message = ex.ToString(),
                 };
             }
 
@@ -125,14 +120,14 @@ namespace Events.Business.Business
                 {
                     return new EventsAppResult
                     {
-                        Status = 404,
-                        Message = "Not found"
+                        Status = Const.WARNING_NO_DATA_CODE,
+                        Message = Const.WARNING_NO_DATA__MSG
                     };
                 }
                 return new EventsAppResult
                 {
-                    Status = 200,
-                    Message = "Get event success",
+                    Status = Const.SUCCESS_READ_CODE,
+                    Message = Const.SUCCESS_READ_MSG,
                     Data = ev
                 };
             }
@@ -140,8 +135,8 @@ namespace Events.Business.Business
             {
                 return new EventsAppResult
                 {
-                    Status = 400,
-                    Message = "Get event error: " + ex,
+                    Status = Const.ERROR_EXCEPTION,
+                    Message = ex.ToString(),
                 };
             }
 
@@ -156,8 +151,8 @@ namespace Events.Business.Business
                 {
                     return new EventsAppResult
                     {
-                        Status = 404,
-                        Message = "Not found"
+                        Status = Const.FAIL_UPDATE_CODE,
+                        Message = Const.FAIL_UPDATE_MSG
                     };
                 }
                 // edit info event
@@ -178,17 +173,16 @@ namespace Events.Business.Business
 
                 return new EventsAppResult
                 {
-                    Status = 200,
-                    Message = "Update event success",
-                    Data = existEvent
+                    Status = Const.SUCCESS_UPDATE_CODE,
+                    Message = Const.SUCCESS_UPDATE_MSG,
                 };
             }
             catch (Exception ex)
             {
                 return new EventsAppResult
                 {
-                    Status = 400,
-                    Message = "Update event error: " + ex,
+                    Status = Const.ERROR_EXCEPTION,
+                    Message = ex.ToString(),
                 };
             }
 
