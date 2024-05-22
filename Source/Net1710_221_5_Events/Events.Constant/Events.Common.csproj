@@ -6,9 +6,4 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Events.Constant\Events.Common.csproj" />
-    <ProjectReference Include="..\Events.Data\Events.Data.csproj" />
-  </ItemGroup>
-
 </Project>
