@@ -33,20 +33,27 @@ namespace Events.Business.Business
         {
             try
             {
-                var customer = await _DAO.GetByIdAsync(customerId);
-                if (customer == null)
+                var currency = await _DAO.GetByIdAsync(customerId);
+                if (currency != null)
                 {
-                    return new EventsAppResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA__MSG);
+                    var result = await _DAO.RemoveAsync(currency);
+                    if (result)
+                    {
+                        return new EventsAppResult(Const.SUCCESS_DELETE_CODE, Const.SUCCESS_DELETE_MSG);
+                    }
+                    else
+                    {
+                        return new EventsAppResult(Const.FAIL_DELETE_CODE, Const.FAIL_DELETE_MSG);
+                    }
                 }
                 else
                 {
-                    await _DAO.RemoveAsync(customer);
-                    return new EventsAppResult(Const.SUCCESS_DELETE_CODE, Const.SUCCESS_DELETE_MSG);
+                    return new EventsAppResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA__MSG);
                 }
             }
             catch (Exception ex)
             {
-                return new EventsAppResult(Const.FAIL_DELETE_CODE, Const.FAIL_DELETE_MSG);
+                return new EventsAppResult(-4, ex.ToString());
             }
         }
 
@@ -54,39 +61,72 @@ namespace Events.Business.Business
         {
             try
             {
-                await _DAO.CreateAsync(customer);
-                return new EventsAppResult(Const.SUCCESS_CREATE_CODE, Const.SUCCESS_CREATE_MSG, customer);
+                //
+
+                int result = await _DAO.CreateAsync(customer);
+                if (result > 0)
+                {
+                    return new EventsAppResult(Const.SUCCESS_CREATE_CODE, Const.SUCCESS_CREATE_MSG);
+                }
+                else
+                {
+                    return new EventsAppResult(Const.FAIL_CREATE_CODE, Const.FAIL_CREATE_MSG);
+                }
             }
             catch (Exception ex)
             {
-                return new EventsAppResult(Const.FAIL_CREATE_CODE, Const.FAIL_CREATE_MSG);
+                return new EventsAppResult(Const.ERROR_EXCEPTION, ex.ToString());
             }
         }
+
 
         public async Task<IEventsAppResult> Read(int customerId)
         {
 
-            var customer = await _DAO.GetByIdAsync(customerId);
-            if (customer != null)
+            try
             {
-                return new EventsAppResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, customer);
+                #region Business rule
+                #endregion
+
+                var currency = await _DAO.GetByIdAsync(customerId);
+
+                if (currency == null)
+                {
+                    return new EventsAppResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA__MSG);
+                }
+                else
+                {
+                    return new EventsAppResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, currency);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return new EventsAppResult(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG);
+                return new EventsAppResult(Const.ERROR_EXCEPTION, ex.Message);
             }
         }
 
         public async Task<IEventsAppResult> ReadAll()
         {
-            var customer = await _DAO.GetAllAsync();
-            if (customer == null)
+            try
             {
-                return new EventsAppResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA__MSG);
+                #region Business rule
+                #endregion
+
+                //var currencies = _DAO.GetAll();
+                var currencies = await _DAO.GetAllAsync();
+
+                if (currencies == null)
+                {
+                    return new EventsAppResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA__MSG);
+                }
+                else
+                {
+                    return new EventsAppResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, currencies);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return new EventsAppResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, customer);
+                return new EventsAppResult(Const.ERROR_EXCEPTION, ex.Message);
             }
         }
 
@@ -94,25 +134,19 @@ namespace Events.Business.Business
         {
             try
             {
-                var existingCustomer = await _DAO.GetByIdAsync(customer.CustomerId);
-
-                if (existingCustomer == null)
+                int result = await _DAO.UpdateAsync(customer);
+                if (result > 0)
                 {
-                    return new EventsAppResult(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG);
+                    return new EventsAppResult(Const.SUCCESS_UPDATE_CODE, Const.SUCCESS_UPDATE_MSG);
                 }
-
-                existingCustomer.FullName = customer.FullName;
-                existingCustomer.Email = customer.Email;
-                existingCustomer.PhoneNumber = customer.PhoneNumber;
-                existingCustomer.Gender = customer.Gender;
-                existingCustomer.DateOfBirth = customer.DateOfBirth;
-
-                await _DAO.UpdateAsync(existingCustomer);
-                return new EventsAppResult(Const.SUCCESS_UPDATE_CODE, Const.SUCCESS_UPDATE_MSG, customer);
+                else
+                {
+                    return new EventsAppResult(Const.FAIL_UPDATE_CODE, Const.FAIL_UPDATE_MSG);
+                }
             }
             catch (Exception ex)
             {
-                return new EventsAppResult(Const.FAIL_UPDATE_CODE, Const.FAIL_UPDATE_MSG);
+                return new EventsAppResult(-4, ex.ToString());
             }
         }
     }
