@@ -1,5 +1,6 @@
 ﻿using Events.Business.Base;
 using Events.Common;
+using Events.Data;
 using Events.Data.DAO;
 using Events.Data.Models;
 using Microsoft.EntityFrameworkCore;
@@ -20,18 +21,20 @@ namespace Events.Business.Business
 
     public class OrderDetailBusiness : IOrderDetailBusiness
     {
-        private readonly OrderDetailDAO _DAO;
+        /*private readonly OrderDetailDAO _DAO;*/
+        private readonly UnitOfWork _unitOfWork;
 
         public OrderDetailBusiness()
         {
-            _DAO = new OrderDetailDAO();
+           /* _DAO = new OrderDetailDAO();*/
+           _unitOfWork = new UnitOfWork();
         }
 
         public async Task<IEventsAppResult> CreateOrderDetailAsync(OrderDetail orderDetail)
         {
             try
             {
-                await _DAO.CreateAsync(orderDetail);
+                await _unitOfWork.OrderDetailRepository.CreateAsync(orderDetail);
                 return new EventsAppResult(Const.SUCCESS_CREATE_CODE, Const.SUCCESS_CREATE_MSG, orderDetail);
             }
             catch (Exception ex)
@@ -44,10 +47,10 @@ namespace Events.Business.Business
         {
             try
             {
-                var orderDetail = await _DAO.GetByIdAsync(orderDetailId);
+                var orderDetail = await _unitOfWork.OrderDetailRepository.GetByIdAsync(orderDetailId);
                 if (orderDetail != null)
                 {
-                    var result = await _DAO.RemoveAsync(orderDetail);
+                    var result = await _unitOfWork.OrderDetailRepository.RemoveAsync(orderDetail);
                     if (result)
                     {
                         return new EventsAppResult(Const.SUCCESS_DELETE_CODE, Const.SUCCESS_DELETE_MSG);
@@ -72,7 +75,7 @@ namespace Events.Business.Business
         {
             try
             {
-                var orderDetails = await _DAO.GetAllAsync();
+                var orderDetails = await _unitOfWork.OrderDetailRepository.GetAllAsync();
                 if (!orderDetails.Any())
                 {
                     return new EventsAppResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA__MSG);
@@ -109,7 +112,7 @@ namespace Events.Business.Business
         {
             try
             {
-                var orderDetail = await _DAO.GetByIdAsync(orderDetailId);
+                var orderDetail = await _unitOfWork.OrderDetailRepository.GetByIdAsync(orderDetailId);
                 if (orderDetail == null)
                 {
                     return new EventsAppResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA__MSG);
@@ -146,7 +149,7 @@ namespace Events.Business.Business
         {
             try
             {
-                var existingOrderDetail = await _DAO.GetByIdAsync(orderDetail.OrderDetailId);
+                var existingOrderDetail = await _unitOfWork.OrderDetailRepository.GetByIdAsync(orderDetail.OrderDetailId);
                 if (existingOrderDetail == null)
                 {
                     return new EventsAppResult(Const.FAIL_UPDATE_CODE, Const.FAIL_UPDATE_MSG);
@@ -157,7 +160,7 @@ namespace Events.Business.Business
                 existingOrderDetail.EventId = orderDetail.EventId;
                 existingOrderDetail.OrderId = orderDetail.OrderId;
 
-                await _DAO.UpdateAsync(existingOrderDetail);
+                await _unitOfWork.OrderDetailRepository.UpdateAsync(existingOrderDetail);
 
                 return new EventsAppResult(Const.SUCCESS_UPDATE_CODE, Const.SUCCESS_UPDATE_MSG, existingOrderDetail);
             }
