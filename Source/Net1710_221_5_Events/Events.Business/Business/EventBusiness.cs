@@ -1,5 +1,6 @@
 ﻿using Events.Business.Base;
 using Events.Common;
+using Events.Data;
 using Events.Data.DAO;
 using Events.Data.Models;
 using Microsoft.EntityFrameworkCore;
@@ -22,18 +23,18 @@ namespace Events.Business.Business
     }
     public class EventBusiness : IEventBusiness
     {
-        private readonly EventDAO _DAO;
+        private readonly UnitOfWork _unitOfWork;
 
-        public EventBusiness()
+        public EventBusiness(UnitOfWork unitOfWork)
         {
-            _DAO = new EventDAO();
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<IEventsAppResult> CreateNewEvent(Event newEvent)
         {
             try
             {
-                await _DAO.CreateAsync(newEvent);
+                await _unitOfWork.EventRepository.CreateAsync(newEvent);
                 return new EventsAppResult
                 {
                     Status = Const.SUCCESS_CREATE_CODE,
@@ -56,10 +57,10 @@ namespace Events.Business.Business
         {
             try
             {
-                var currency = await _DAO.GetByIdAsync(id);
+                var currency = await _unitOfWork.EventRepository.GetByIdAsync(id);
                 if (currency != null)
                 {
-                    var result = await _DAO.RemoveAsync(currency);
+                    var result = await _unitOfWork.EventRepository.RemoveAsync(currency);
                     if (result)
                     {
                         return new EventsAppResult(Const.SUCCESS_DELETE_CODE, Const.SUCCESS_DELETE_MSG);
@@ -84,7 +85,7 @@ namespace Events.Business.Business
         {
             try
             {
-                var events = await _DAO.GetAllAsync();
+                var events = await _unitOfWork.EventRepository.GetAllAsync();
                 if (!events.Any())
                 {
                     return new EventsAppResult
@@ -115,7 +116,7 @@ namespace Events.Business.Business
         {
             try
             {
-                var ev = await _DAO.GetByIdAsync(id);
+                var ev = await _unitOfWork.EventRepository.GetByIdAsync(id);
                 if (ev != null)
                 {
                     return new EventsAppResult
@@ -146,7 +147,7 @@ namespace Events.Business.Business
         {
             try
             {
-                var existEvent = await _DAO.GetByIdAsync(updateEvent.EventId);
+                var existEvent = await _unitOfWork.EventRepository.GetByIdAsync(updateEvent.EventId);
                 if (existEvent == null)
                 {
                     return new EventsAppResult
@@ -169,7 +170,7 @@ namespace Events.Business.Business
                 existEvent.OperatorName = updateEvent.OperatorName;
 
                 // save event
-                await _DAO.UpdateAsync(existEvent);
+                await _unitOfWork.EventRepository.UpdateAsync(existEvent);
 
                 return new EventsAppResult
                 {

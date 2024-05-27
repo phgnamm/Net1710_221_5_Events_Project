@@ -1,10 +1,13 @@
 ﻿using Events.Business.Base;
+using Events.Common;
+using Events.Data;
 using Events.Data.DAO;
 using Events.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,17 +24,11 @@ namespace Events.Business.Business
     }
     public class OrderDetailBusiness : IOrderDetailBusiness
     {
-        /*private readonly Net17102215EventsContext _context;*/
-        private readonly OrderDetailDAO _DAO;
+        private readonly UnitOfWork _unitOfWork;
 
-        /*   public OrderDetailBusiness(Net17102215EventsContext context)
-           {
-               _context = context;
-           }
-        */
-        public OrderDetailBusiness()
+        public OrderDetailBusiness(UnitOfWork unitOfWork)
         {
-            _DAO = new OrderDetailDAO();
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<IEventsAppResult> CreateOrderDetailAsync(OrderDetail orderDetail)
@@ -40,7 +37,7 @@ namespace Events.Business.Business
             {
                 /*_context.OrderDetails.Add(orderDetail);
                 await _context.SaveChangesAsync();*/
-                await _DAO.CreateAsync(orderDetail);
+                await _unitOfWork.OrderDetailRepository.CreateAsync(orderDetail);
                 return new EventsAppResult(0, "OrderDetail created successfully", orderDetail);
             }
             catch (Exception ex)
@@ -57,7 +54,7 @@ namespace Events.Business.Business
                      .Include(od => od.Event)
                      .Include(od => od.Order)
                      .FirstOrDefaultAsync(od => od.OrderDetailId == orderDetailId);*/
-                var orderDetail = _DAO.GetByIdAsync(orderDetailId);
+                var orderDetail = _unitOfWork.OrderDetailRepository.GetByIdAsync(orderDetailId);
 
                 if (orderDetail == null)
                 {
@@ -76,7 +73,7 @@ namespace Events.Business.Business
         {
             try
             {
-                var orderDetails = _DAO.GetAllAsync();
+                var orderDetails = _unitOfWork.OrderDetailRepository.GetAllAsync();
                 /*var orderDetails = await _context.OrderDetails
                     .Include(od => od.Event)
                     .Include(od => od.Order)
@@ -96,7 +93,7 @@ namespace Events.Business.Business
             {
                 /* _context.OrderDetails.Update(orderDetail);
                  await _context.SaveChangesAsync();*/
-                await _DAO.UpdateAsync(orderDetail);
+                await _unitOfWork.OrderDetailRepository.UpdateAsync(orderDetail);
                 return new EventsAppResult(0, "OrderDetail updated successfully", orderDetail);
             }
             catch (Exception ex)
@@ -110,7 +107,7 @@ namespace Events.Business.Business
             try
             {
                 /* var orderDetail = await _context.OrderDetails.FindAsync(orderDetailId);*/
-                var orderDetail = _DAO.GetByIdAsync(orderDetailId);
+                var orderDetail = _unitOfWork.OrderDetailRepository.GetByIdAsync(orderDetailId);
                 if (orderDetail == null)
                 {
                     return new EventsAppResult(-1, "OrderDetail not found");
