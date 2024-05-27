@@ -8,10 +8,11 @@ using System.Threading.Tasks;
 
 namespace Events.Data.Repository
 {
-    public class OrderDetailRepository: GenericRepository<OrderDetail>
+    public class OrderRepository : GenericRepository<Order>
     {
-        public OrderDetailRepository(Net17102215EventsContext context) : base(context)
-        { 
+        public OrderRepository(Net17102215EventsContext context) : base(context)
+        {
         }
     }
+
 }

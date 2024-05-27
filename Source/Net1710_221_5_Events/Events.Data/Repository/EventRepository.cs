@@ -10,7 +10,7 @@ namespace Events.Data.Repository
 {
     public class EventRepository : GenericRepository<Event>
     {
-        public EventRepository()
+        public EventRepository(Net17102215EventsContext context) : base(context)
         { 
         
         }

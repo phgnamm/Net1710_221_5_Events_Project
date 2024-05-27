@@ -21,13 +21,12 @@ namespace Events.Business.Business
 
     public class OrderDetailBusiness : IOrderDetailBusiness
     {
-        /*private readonly OrderDetailDAO _DAO;*/
+
         private readonly UnitOfWork _unitOfWork;
 
-        public OrderDetailBusiness()
+        public OrderDetailBusiness(UnitOfWork unitOfWork)
         {
-           /* _DAO = new OrderDetailDAO();*/
-           _unitOfWork = new UnitOfWork();
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<IEventsAppResult> CreateOrderDetailAsync(OrderDetail orderDetail)
@@ -35,7 +34,7 @@ namespace Events.Business.Business
             try
             {
                 await _unitOfWork.OrderDetailRepository.CreateAsync(orderDetail);
-                return new EventsAppResult(Const.SUCCESS_CREATE_CODE, Const.SUCCESS_CREATE_MSG, orderDetail);
+                return new EventsAppResult(0, "OrderDetail created successfully", orderDetail);
             }
             catch (Exception ex)
             {
@@ -47,8 +46,8 @@ namespace Events.Business.Business
         {
             try
             {
-                var orderDetail = await _unitOfWork.OrderDetailRepository.GetByIdAsync(orderDetailId);
-                if (orderDetail != null)
+                var orderDetail = _unitOfWork.OrderDetailRepository.GetByIdAsync(orderDetailId);
+                if (orderDetail == null)
                 {
                     var result = await _unitOfWork.OrderDetailRepository.RemoveAsync(orderDetail);
                     if (result)
@@ -75,6 +74,7 @@ namespace Events.Business.Business
         {
             try
             {
+
                 var orderDetails = await _unitOfWork.OrderDetailRepository.GetAllAsync();
                 if (!orderDetails.Any())
                 {
@@ -99,6 +99,7 @@ namespace Events.Business.Business
                         od.Order.PaymentStatus
                     }
                 }).ToList();
+
 
                 return new EventsAppResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result);
             }
