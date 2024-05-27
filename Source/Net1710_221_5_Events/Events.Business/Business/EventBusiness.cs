@@ -3,6 +3,7 @@ using Events.Common;
 using Events.Data;
 using Events.Data.DAO;
 using Events.Data.Models;
+using Events.Data.Repository;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -35,6 +36,7 @@ namespace Events.Business.Business
             try
             {
                 await _unitOfWork.EventRepository.CreateAsync(newEvent);
+
                 return new EventsAppResult
                 {
                     Status = Const.SUCCESS_CREATE_CODE,
@@ -116,7 +118,9 @@ namespace Events.Business.Business
         {
             try
             {
+
                 var ev = await _unitOfWork.EventRepository.GetByIdAsync(id);
+
                 if (ev != null)
                 {
                     return new EventsAppResult
@@ -148,6 +152,7 @@ namespace Events.Business.Business
             try
             {
                 var existEvent = await _unitOfWork.EventRepository.GetByIdAsync(updateEvent.EventId);
+
                 if (existEvent == null)
                 {
                     return new EventsAppResult

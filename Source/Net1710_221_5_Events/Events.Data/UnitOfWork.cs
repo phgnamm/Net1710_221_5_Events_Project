@@ -25,5 +25,4 @@ namespace Events.Data
         public OrderDetailRepository OrderDetailRepository => _orderDetailRepository ??= new OrderDetailRepository(_unitOfWorkContext);
 
     }
-
 }

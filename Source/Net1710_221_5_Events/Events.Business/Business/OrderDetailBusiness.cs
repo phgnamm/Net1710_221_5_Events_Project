@@ -5,15 +5,11 @@ using Events.Data.DAO;
 using Events.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Events.Business.Business
 {
-
     public interface IOrderDetailBusiness
     {
         Task<IEventsAppResult> CreateOrderDetailAsync(OrderDetail orderDetail);
@@ -22,8 +18,10 @@ namespace Events.Business.Business
         Task<IEventsAppResult> UpdateOrderDetailAsync(OrderDetail orderDetail);
         Task<IEventsAppResult> DeleteOrderDetailAsync(int orderDetailId);
     }
+
     public class OrderDetailBusiness : IOrderDetailBusiness
     {
+
         private readonly UnitOfWork _unitOfWork;
 
         public OrderDetailBusiness(UnitOfWork unitOfWork)
@@ -35,70 +33,12 @@ namespace Events.Business.Business
         {
             try
             {
-                /*_context.OrderDetails.Add(orderDetail);
-                await _context.SaveChangesAsync();*/
                 await _unitOfWork.OrderDetailRepository.CreateAsync(orderDetail);
                 return new EventsAppResult(0, "OrderDetail created successfully", orderDetail);
             }
             catch (Exception ex)
             {
-                return new EventsAppResult(-1, $"Failed to create OrderDetail: {ex.Message}");
-            }
-        }
-
-        public async Task<IEventsAppResult> GetOrderDetailByIdAsync(int orderDetailId)
-        {
-            try
-            {
-                /* var orderDetail = await _context.OrderDetails
-                     .Include(od => od.Event)
-                     .Include(od => od.Order)
-                     .FirstOrDefaultAsync(od => od.OrderDetailId == orderDetailId);*/
-                var orderDetail = _unitOfWork.OrderDetailRepository.GetByIdAsync(orderDetailId);
-
-                if (orderDetail == null)
-                {
-                    return new EventsAppResult(-1, "OrderDetail not found");
-                }
-
-                return new EventsAppResult(0, "OrderDetail retrieved successfully", orderDetail);
-            }
-            catch (Exception ex)
-            {
-                return new EventsAppResult(-1, $"Failed to retrieve OrderDetail: {ex.Message}");
-            }
-        }
-
-        public async Task<IEventsAppResult> GetAllOrderDetailsAsync()
-        {
-            try
-            {
-                var orderDetails = _unitOfWork.OrderDetailRepository.GetAllAsync();
-                /*var orderDetails = await _context.OrderDetails
-                    .Include(od => od.Event)
-                    .Include(od => od.Order)
-                    .ToListAsync();*/
-
-                return new EventsAppResult(0, "All OrderDetails retrieved successfully", orderDetails);
-            }
-            catch (Exception ex)
-            {
-                return new EventsAppResult(-1, $"Failed to retrieve OrderDetails: {ex.Message}");
-            }
-        }
-
-        public async Task<IEventsAppResult> UpdateOrderDetailAsync(OrderDetail orderDetail)
-        {
-            try
-            {
-                /* _context.OrderDetails.Update(orderDetail);
-                 await _context.SaveChangesAsync();*/
-                await _unitOfWork.OrderDetailRepository.UpdateAsync(orderDetail);
-                return new EventsAppResult(0, "OrderDetail updated successfully", orderDetail);
-            }
-            catch (Exception ex)
-            {
-                return new EventsAppResult(-1, $"Failed to update OrderDetail: {ex.Message}");
+                return new EventsAppResult(Const.ERROR_EXCEPTION, ex.ToString());
             }
         }
 
@@ -106,23 +46,129 @@ namespace Events.Business.Business
         {
             try
             {
-                /* var orderDetail = await _context.OrderDetails.FindAsync(orderDetailId);*/
                 var orderDetail = _unitOfWork.OrderDetailRepository.GetByIdAsync(orderDetailId);
                 if (orderDetail == null)
                 {
-                    return new EventsAppResult(-1, "OrderDetail not found");
+                    var result = await _unitOfWork.OrderDetailRepository.RemoveAsync(orderDetail);
+                    if (result)
+                    {
+                        return new EventsAppResult(Const.SUCCESS_DELETE_CODE, Const.SUCCESS_DELETE_MSG);
+                    }
+                    else
+                    {
+                        return new EventsAppResult(Const.FAIL_DELETE_CODE, Const.FAIL_DELETE_MSG);
+                    }
                 }
-
-                /*_context.OrderDetails.Remove(orderDetail);
-                await _context.SaveChangesAsync();*/
-
-                return new EventsAppResult(0, "OrderDetail deleted successfully", orderDetail);
+                else
+                {
+                    return new EventsAppResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA__MSG);
+                }
             }
             catch (Exception ex)
             {
-                return new EventsAppResult(-1, $"Failed to delete OrderDetail: {ex.Message}");
+                return new EventsAppResult(Const.ERROR_EXCEPTION, ex.ToString());
+            }
+        }
+
+        public async Task<IEventsAppResult> GetAllOrderDetailsAsync()
+        {
+            try
+            {
+
+                var orderDetails = await _unitOfWork.OrderDetailRepository.GetAllAsync();
+                if (!orderDetails.Any())
+                {
+                    return new EventsAppResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA__MSG);
+                }
+
+                var result = orderDetails.Select(od => new
+                {
+                    od.OrderDetailId,
+                    od.Quantity,
+                    od.Price,
+                    Event = new
+                    {
+                        od.Event.Name,
+                        od.Event.Location,
+                        od.Event.StartDate,
+                        od.Event.EndDate
+                    },
+                    Order = new
+                    {
+                        od.Order.Code,
+                        od.Order.PaymentStatus
+                    }
+                }).ToList();
+
+
+                return new EventsAppResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result);
+            }
+            catch (Exception ex)
+            {
+                return new EventsAppResult(Const.ERROR_EXCEPTION, ex.ToString());
+            }
+        }
+
+        public async Task<IEventsAppResult> GetOrderDetailByIdAsync(int orderDetailId)
+        {
+            try
+            {
+                var orderDetail = await _unitOfWork.OrderDetailRepository.GetByIdAsync(orderDetailId);
+                if (orderDetail == null)
+                {
+                    return new EventsAppResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA__MSG);
+                }
+
+                var result = new
+                {
+                    orderDetail.OrderDetailId,
+                    orderDetail.Quantity,
+                    orderDetail.Price,
+                    Event = new
+                    {
+                        orderDetail.Event.Name,
+                        orderDetail.Event.Location,
+                        orderDetail.Event.StartDate,
+                        orderDetail.Event.EndDate
+                    },
+                    Order = new
+                    {
+                        orderDetail.Order.Code,
+                        orderDetail.Order.PaymentStatus
+                    }
+                };
+
+                return new EventsAppResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result);
+            }
+            catch (Exception ex)
+            {
+                return new EventsAppResult(Const.ERROR_EXCEPTION, ex.ToString());
+            }
+        }
+
+        public async Task<IEventsAppResult> UpdateOrderDetailAsync(OrderDetail orderDetail)
+        {
+            try
+            {
+                var existingOrderDetail = await _unitOfWork.OrderDetailRepository.GetByIdAsync(orderDetail.OrderDetailId);
+                if (existingOrderDetail == null)
+                {
+                    return new EventsAppResult(Const.FAIL_UPDATE_CODE, Const.FAIL_UPDATE_MSG);
+                }
+
+                existingOrderDetail.Quantity = orderDetail.Quantity;
+                existingOrderDetail.Price = orderDetail.Price;
+                existingOrderDetail.EventId = orderDetail.EventId;
+                existingOrderDetail.OrderId = orderDetail.OrderId;
+
+                await _unitOfWork.OrderDetailRepository.UpdateAsync(existingOrderDetail);
+
+                return new EventsAppResult(Const.SUCCESS_UPDATE_CODE, Const.SUCCESS_UPDATE_MSG, existingOrderDetail);
+            }
+            catch (Exception ex)
+            {
+                return new EventsAppResult(Const.ERROR_EXCEPTION, ex.ToString());
             }
         }
     }
 }
-
