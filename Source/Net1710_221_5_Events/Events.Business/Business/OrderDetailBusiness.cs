@@ -1,7 +1,6 @@
 ﻿using Events.Business.Base;
 using Events.Common;
 using Events.Data;
-using Events.Data.DAO;
 using Events.Data.DTOs;
 using Events.Data.Models;
 using Microsoft.EntityFrameworkCore;

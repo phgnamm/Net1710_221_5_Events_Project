@@ -55,10 +55,13 @@
                                         <i class="fas fa-edit"></i> Edit
                                     </button>
                                     <form method="post" asp-page-handler="Delete" asp-route-id="@orderDetail.OrderDetailId">
-                                        <button type="submit" class="btn btn-danger">
+                                        <button type="submit" class="btn btn-danger me-2">
                                             <i class="fas fa-trash-alt"></i> Delete
                                         </button>
                                     </form>
+                                    <button type="button" class="btn btn-info me-2" onclick="openDetailModal('@orderDetail.OrderDetailId')">
+                                        <i class="fas fa-info-circle"></i> Detail
+                                    </button>
                                 </div>
 
                             </td>
