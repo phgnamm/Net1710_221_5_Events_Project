@@ -1,0 +1,185 @@
+﻿@page
+@model Events.RazorWebApp.Pages.OrderDetailModel
+@{
+    ViewData["Title"] = "Order Details";
+    var orderDetails = Model.OrderDetails;
+}
+
+<div class="text-center">
+    <h1 class="display-6">Order Detail Management</h1>
+</div>
+
+<div class="row">
+    <div class="col-md-12 text-end">
+        <button type="button" class="btn btn-primary" onclick="add();">
+            Add
+        </button>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-striped table-bordered table-hover">
+            <thead>
+                <tr class="card-header">
+                    @* <th class="card-title text-center">Order Detail ID</th> *@
+                    <th class="card-title text-center">Quantity</th>
+                    <th class="card-title text-center">Price</th>
+                    <th class="card-title text-center">Event Name</th>
+                    <th class="card-title text-center">Event Location</th>
+                    <th class="card-title text-center">Event Start Date</th>
+                    <th class="card-title text-center">Event End Date</th>
+                    <th class="card-title text-center">Order Code</th>
+                    <th class="card-title text-center">Payment Status</th>
+                    <th class="card-title text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="tblOrderDetailList">
+                @if (orderDetails.Count > 0)
+                {
+                    foreach (var orderDetail in orderDetails)
+                    {
+                        <tr>
+                           @*  <td class="text-center">@orderDetail.OrderDetailId</td> *@
+                            <td class="text-center">@orderDetail.Quantity</td>
+                            <td class="text-center">@orderDetail.Price</td>
+                            <td class="text-center">@orderDetail.Event?.Name</td>
+                            <td class="text-center">@orderDetail.Event?.Location</td>
+                            <td class="text-center">@orderDetail.Event?.StartDate</td>
+                            <td class="text-center">@orderDetail.Event?.EndDate</td>
+                            <td class="text-center">@orderDetail.Order?.Code</td>
+                            <td class="text-center">@orderDetail.Order?.PaymentStatus</td>
+                            <td class="text-center">
+                                <div class="d-flex justify-content-center">
+                                    <button type="button" class="btn btn-warning me-2" onclick="openEditModal('@orderDetail.OrderDetailId', '@orderDetail.Quantity', '@orderDetail.Price')">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </button>
+                                    <form method="post" asp-page-handler="Delete" asp-route-id="@orderDetail.OrderDetailId">
+                                        <button type="submit" class="btn btn-danger">
+                                            <i class="fas fa-trash-alt"></i> Delete
+                                        </button>
+                                    </form>
+                                </div>
+
+                            </td>
+
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="10" class="text-center">No order details available.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="orderDetailModal" tabindex="-1" aria-labelledby="orderDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            @using (Html.BeginForm(null, null, FormMethod.Post, new { name = "frm", id = "frm" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="modal-header">
+                    <h5 class="modal-title" id="orderDetailModalLabel">Order Detail Transaction</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="orderDetailModalContent"></div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group row">
+                                <div class="col-md-6">
+                                    <label for="quantity">Quantity</label>
+                                    <input asp-for="OrderDetail.Quantity" class="form-control" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="price">Price</label>
+                                    <input asp-for="OrderDetail.Price" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group row">
+                                <div class="col-md-6">
+                                    <label for="eventId">Event ID</label>
+                                    <input asp-for="OrderDetail.EventId" class="form-control" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="orderId">Order ID</label>
+                                    <input asp-for="OrderDetail.OrderId" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <label>@Model.Message</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="btSave" type="submit" class="btn btn-primary">Save</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@*-------------------EDIT---------------------------*@
+<div class="modal fade" id="editOrderDetailModal" tabindex="-1" aria-labelledby="editOrderDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            @using (Html.BeginForm(null, null, FormMethod.Post, new { name = "editFrm", id = "editFrm" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editOrderDetailModalLabel">Edit Order Detail</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group row">
+                                <div class="col-md-6">
+                                    <label for="editQuantity">Quantity</label>
+                                    <input asp-for="OrderDetail.Quantity" id="editQuantity" class="form-control" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="editPrice">Price</label>
+                                    <input asp-for="OrderDetail.Price" id="editPrice" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="editBtSave" type="submit" class="btn btn-primary">Save</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script type="text/javascript">
+        function add() {
+            $('#orderDetailModal').modal('show');
+        }
+        function openEditModal(orderDetailId, quantity, price) {
+            $('#editOrderDetailModal').modal('show');
+
+            // Update modal fields with data from the row
+            $('#editQuantity').val(quantity);
+            $('#editPrice').val(price);
+
+            // Update the form action with the correct OrderDetailId
+            $('#editFrm').attr('action', '/OrderDetail/Edit/' + orderDetailId);
+
+        }
+    </script>
+}
