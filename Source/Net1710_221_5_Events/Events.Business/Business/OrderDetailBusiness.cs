@@ -2,6 +2,7 @@
 using Events.Common;
 using Events.Data;
 using Events.Data.DAO;
+using Events.Data.DTOs;
 using Events.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -23,7 +24,10 @@ namespace Events.Business.Business
     {
 
         private readonly UnitOfWork _unitOfWork;
-
+        public OrderDetailBusiness()
+        {
+            _unitOfWork = new UnitOfWork();
+        }
         public OrderDetailBusiness(UnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
@@ -46,8 +50,8 @@ namespace Events.Business.Business
         {
             try
             {
-                var orderDetail = _unitOfWork.OrderDetailRepository.GetByIdAsync(orderDetailId);
-                if (orderDetail == null)
+                var orderDetail = await _unitOfWork.OrderDetailRepository.GetByIdAsync(orderDetailId);
+                if (orderDetail != null)
                 {
                     var result = await _unitOfWork.OrderDetailRepository.RemoveAsync(orderDetail);
                     if (result)
@@ -74,32 +78,30 @@ namespace Events.Business.Business
         {
             try
             {
-
                 var orderDetails = await _unitOfWork.OrderDetailRepository.GetAllAsync();
                 if (!orderDetails.Any())
                 {
                     return new EventsAppResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA__MSG);
                 }
 
-                var result = orderDetails.Select(od => new
+                var result = orderDetails.Select(od => new OrderDetailDto
                 {
-                    od.OrderDetailId,
-                    od.Quantity,
-                    od.Price,
-                    Event = new
+                    OrderDetailId = od.OrderDetailId,
+                    Quantity = od.Quantity,
+                    Price = od.Price,
+                    Event = new EventDto
                     {
-                        od.Event.Name,
-                        od.Event.Location,
-                        od.Event.StartDate,
-                        od.Event.EndDate
+                        Name = od.Event.Name,
+                        Location = od.Event.Location,
+                        StartDate = od.Event.StartDate,
+                        EndDate = od.Event.EndDate
                     },
-                    Order = new
+                    Order = new OrderDto
                     {
-                        od.Order.Code,
-                        od.Order.PaymentStatus
+                        Code = od.Order.Code,
+                        PaymentStatus = od.Order.PaymentStatus
                     }
                 }).ToList();
-
 
                 return new EventsAppResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result);
             }
@@ -108,6 +110,7 @@ namespace Events.Business.Business
                 return new EventsAppResult(Const.ERROR_EXCEPTION, ex.ToString());
             }
         }
+
 
         public async Task<IEventsAppResult> GetOrderDetailByIdAsync(int orderDetailId)
         {
