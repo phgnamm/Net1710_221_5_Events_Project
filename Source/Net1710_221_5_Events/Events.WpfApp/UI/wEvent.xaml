@@ -41,9 +41,14 @@
                     <DataGrid x:Name="grdEvent" AutoGenerateColumns="False" ItemsSource="{Binding Events}" CanUserAddRows="False" Height="200" Margin="10" MouseDoubleClick="grdCurrency_MouseDouble_Click" SelectionMode="Single" SelectionUnit="FullRow">
                         <DataGrid.Columns>
                             <!--<DataGridTextColumn Header="Code" Binding="{Binding Path=Id}" Visibility="Hidden"/>-->
-                            <DataGridTextColumn Header="Name" Binding="{Binding Path=Name}" Width="150" Visibility="Visible"/>
-                            <DataGridTextColumn Header="Location" Binding="{Binding Path=Location}" Width="200"  IsReadOnly="True"/>
-                            <DataGridTextColumn Header="Description" Binding="{Binding Path=Description}" Width="350"  IsReadOnly="True"/>
+                            <DataGridTextColumn Header="Name" Binding="{Binding Path=Name}" Width="100" Visibility="Visible"/>
+                            <DataGridTextColumn Header="Location" Binding="{Binding Path=Location}" Width="100"  IsReadOnly="True"/>
+                            <DataGridTextColumn Header="Description" Binding="{Binding Path=Description}" Width="150"  IsReadOnly="True"/>
+                            <DataGridTextColumn Header="Start date" Binding="{Binding Path=StartDate}" Width="80"  IsReadOnly="True"/>
+                            <DataGridTextColumn Header="End date" Binding="{Binding Path=EndDate}" Width="80"  IsReadOnly="True"/>
+                            <DataGridTextColumn Header="Ticket price" Binding="{Binding Path=TicketPrice}" Width="100"  IsReadOnly="True"/>
+                            <DataGridTextColumn Header="Quantity" Binding="{Binding Path=Quantity}" Width="70"  IsReadOnly="True"/>
+                            <DataGridTextColumn Header="Operator" Binding="{Binding Path=OperatorName}" Width="100"  IsReadOnly="True"/>
                             <!--<DataGridTextColumn Header="Active" Binding="{Binding Path=IsActive}" Width="50"  IsReadOnly="True"/>-->
                             <DataGridTemplateColumn Width="50">
                                 <DataGridTemplateColumn.CellTemplate>
