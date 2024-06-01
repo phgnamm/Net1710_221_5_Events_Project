@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Events.Data.Base
 {
-    public class GenericRepository<T> where T: class
+    public class GenericRepository<T> where T : class
     {
         protected readonly Net17102215EventsContext _context;
         protected readonly DbSet<T> _dbSet;
@@ -135,3 +135,4 @@ namespace Events.Data.Base
         }
     }
 }
+

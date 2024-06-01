@@ -1,6 +1,6 @@
 ﻿using Events.Business.Base;
 using Events.Common;
-using Events.Data.DAO;
+using Events.Data;
 using Events.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -22,18 +22,18 @@ namespace Events.Business
 
     public class OrderBusiness : IOrderBusiness
     {
-        private readonly OrderDAO _DAO;
+        private readonly UnitOfWork _unitOfWork;
 
-        public OrderBusiness()
+        public OrderBusiness(UnitOfWork unitOfWork)
         {
-            _DAO = new OrderDAO();
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<IEventsAppResult> CreateNewOrder(Order newOrder)
         {
             try
             {
-                await _DAO.CreateAsync(newOrder);
+                await _unitOfWork.OrderRepository.CreateAsync(newOrder);
                 return new EventsAppResult
                 {
                     Status = Const.SUCCESS_CREATE_CODE,
@@ -56,10 +56,10 @@ namespace Events.Business
         {
             try
             {
-                var currency = await _DAO.GetByIdAsync(id);
+                var currency = await _unitOfWork.OrderRepository.GetByIdAsync(id);
                 if (currency != null)
                 {
-                    var result = await _DAO.RemoveAsync(currency);
+                    var result = await _unitOfWork.OrderRepository.RemoveAsync(currency);
                     if (result)
                     {
                         return new EventsAppResult(Const.SUCCESS_DELETE_CODE, Const.SUCCESS_DELETE_MSG);
@@ -84,7 +84,7 @@ namespace Events.Business
         {
             try
             {
-                var orders = await _DAO.GetAllAsync();
+                var orders = await _unitOfWork.OrderRepository.GetAllAsync();
                 if (!orders.Any())
                 {
                     return new EventsAppResult
@@ -115,7 +115,7 @@ namespace Events.Business
         {
             try
             {
-                var order = await _DAO.GetByIdAsync(id);
+                var order = await _unitOfWork.OrderRepository.GetByIdAsync(id);
                 if (order != null)
                 {
                     return new EventsAppResult
@@ -146,7 +146,7 @@ namespace Events.Business
         {
             try
             {
-                var existOrder = await _DAO.GetByIdAsync(updateOrder.OrderId);
+                var existOrder = await _unitOfWork.OrderRepository.GetByIdAsync(updateOrder.OrderId);
                 if (existOrder == null)
                 {
                     return new EventsAppResult
@@ -165,7 +165,7 @@ namespace Events.Business
                 existOrder.PaymentDate = updateOrder.PaymentDate;
 
                 // save order
-                await _DAO.UpdateAsync(existOrder);
+                await _unitOfWork.OrderRepository.UpdateAsync(existOrder);
 
                 return new EventsAppResult
                 {

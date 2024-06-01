@@ -6,13 +6,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Events.Data.DAO
+namespace Events.Data.Repository
 {
-    public class CustomerDAO : BaseDAO<Customer>
+    public class OrderRepository : GenericRepository<Order>
     {
-        public CustomerDAO()
+        public OrderRepository(Net17102215EventsContext context) : base(context)
         {
-                
         }
     }
+
 }
