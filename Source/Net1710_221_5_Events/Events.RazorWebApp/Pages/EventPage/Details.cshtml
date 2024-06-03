@@ -1,0 +1,73 @@
+﻿@page "{id:int}"
+@model Events.RazorWebApp.Pages.EventPage.DetailsModel
+
+@{
+    ViewData["Title"] = "Event Details";
+}
+
+<h1>Event Details</h1>
+
+<div>
+    <a asp-page="./Index">Back to Events</a>
+</div>
+
+@if (Model.Event == null)
+{
+    <div class="alert alert-danger" role="alert">
+        Event not found.
+    </div>
+}
+else
+{
+
+    <div style="padding: 10px 0">
+        <img src="@Model.Event.ImageLink" alt="Event Image" width="300px" />
+    </div>
+
+    <table class="table table-striped">
+        <tr>
+            <th>Event Name</th>
+            <td>@Model.Event.Name</td>
+        </tr>
+        <tr>
+            <th>Location</th>
+            <td>@Model.Event.Location</td>
+        </tr>
+        <tr>
+            <th>Description</th>
+            <td>@Model.Event.Description</td>
+        </tr>
+        <tr>
+            <th>StartDate</th>
+            <td>@Model.Event.StartDate</td>
+        </tr>
+        <tr>
+            <th>EndDate</th>
+            <td>@Model.Event.EndDate</td>
+        </tr>
+        <tr>
+            <th>OpenTicket</th>
+            <td>@Model.Event.OpenTicket</td>
+        </tr>
+        <tr>
+            <th>CloseTicket</th>
+            <td>@Model.Event.CloseTicket</td>
+        </tr>
+        <tr>
+            <th>TicketPrice</th>
+            <td>@Model.Event.TicketPrice</td>
+        </tr>
+        <tr>
+            <th>Quantity</th>
+            <td>@Model.Event.Quantity</td>
+        </tr>
+        <tr>
+            <th>OperatorName</th>
+            <td>@Model.Event.OperatorName</td>
+        </tr>
+    </table>
+    <div>
+        <a asp-page="./Edit" asp-route-id="@Model.Event.EventId" class="btn btn-primary">Edit</a>
+        <a asp-page="./Delete" asp-route-id="@Model.Event.EventId" class="btn btn-danger">Delete</a>
+    </div>
+}
