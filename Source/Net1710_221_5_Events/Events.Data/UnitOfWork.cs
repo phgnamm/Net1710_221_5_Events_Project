@@ -21,7 +21,7 @@ namespace Events.Data
         }
         public UnitOfWork()
         {
-            _unitOfWorkContext = new Net17102215EventsContext();
+            _unitOfWorkContext ??= new Net17102215EventsContext();
         }
         public EventRepository EventRepository => _eventRepository ??= new EventRepository(_unitOfWorkContext);
         public OrderRepository OrderRepository => _orderRepository ??= new OrderRepository(_unitOfWorkContext);

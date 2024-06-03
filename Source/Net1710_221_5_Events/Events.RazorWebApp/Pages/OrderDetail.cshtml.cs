@@ -16,6 +16,7 @@ namespace Events.RazorWebApp.Pages
         [BindProperty]
         public OrderDetail OrderDetail { get; set; } = default;
         public List<OrderDetailDto> OrderDetails { get; set; } = new List<OrderDetailDto>();
+        public List<Event> Events { get; set; } = new List<Event>();
 
         public void OnGet()
         {
@@ -25,6 +26,11 @@ namespace Events.RazorWebApp.Pages
         public IActionResult OnPost()
         {
             SaveOrderDetail();
+            return RedirectToPage();
+        }
+        public IActionResult OnPostEdit()
+        {
+            UpdateOrderDetail();
             return RedirectToPage();
         }
 
@@ -63,6 +69,19 @@ namespace Events.RazorWebApp.Pages
         private void DeleteOrderDetail(int id)
         {
             var orderDetailResult = _orderDetailBusiness.DeleteOrderDetailAsync(id).Result;
+
+            if (orderDetailResult != null)
+            {
+                this.Message = orderDetailResult.Message;
+            }
+            else
+            {
+                this.Message = "Error system";
+            }
+        }
+        private void UpdateOrderDetail()
+        {
+            var orderDetailResult = _orderDetailBusiness.UpdateOrderDetailAsync(this.OrderDetail).Result;
 
             if (orderDetailResult != null)
             {
