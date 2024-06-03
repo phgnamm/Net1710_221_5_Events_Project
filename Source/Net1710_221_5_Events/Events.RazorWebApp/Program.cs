@@ -1,7 +1,13 @@
+using Events.Business;
+using Events.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+// Dependency Injection
+builder.Services.AddScoped<UnitOfWork>();
+builder.Services.AddScoped<IOrderBusiness, OrderBusiness>();
 
 var app = builder.Build();
 
