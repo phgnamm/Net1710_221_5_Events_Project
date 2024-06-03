@@ -25,9 +25,9 @@ namespace Events.Business.Business
     {
         private readonly UnitOfWork _unitOfWork;
 
-        public EventBusiness(UnitOfWork unitOfWork)
+        public EventBusiness()
         {
-            _unitOfWork = unitOfWork;
+            _unitOfWork = new UnitOfWork();
         }
 
         public async Task<IEventsAppResult> CreateNewEvent(Event newEvent)

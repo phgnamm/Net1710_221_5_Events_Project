@@ -15,10 +15,10 @@ namespace Events.Data
         private OrderRepository _orderRepository;
         private OrderDetailRepository _orderDetailRepository;
 
-        public UnitOfWork(Net17102215EventsContext unitOfWorkContext)
-        {
-            _unitOfWorkContext = unitOfWorkContext;
-        }
+        //public UnitOfWork(Net17102215EventsContext unitOfWorkContext)
+        //{
+        //    _unitOfWorkContext = unitOfWorkContext;
+        //}
         public UnitOfWork()
         {
             _unitOfWorkContext ??= new Net17102215EventsContext();
