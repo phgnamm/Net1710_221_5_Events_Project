@@ -15,12 +15,5 @@ namespace Events.Data.Repository
         {
         }*/
         public OrderDetailRepository(Net17102215EventsContext context) => _context = context;
-
-        /*public async Task<List<OrderDetail>> GetAllAsync()
-        {
-            return await _dbSet.Include(od => od.Event)
-                               .Include(od => od.Order)
-                               .ToListAsync();
-        }*/
     }
 }

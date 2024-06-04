@@ -23,15 +23,19 @@ namespace Events.Business.Business
     {
 
         private readonly UnitOfWork _unitOfWork;
+        private IOrderBusiness _orderBusiness;
+        private IEventBusiness _eventBusiness;
         public OrderDetailBusiness()
         {
             _unitOfWork = new UnitOfWork();
+            _orderBusiness = new OrderBusiness();
+            _eventBusiness = new EventBusiness();
         }
-        public OrderDetailBusiness(UnitOfWork unitOfWork)
-        {
-            _unitOfWork = unitOfWork;
-        }
-
+        /* public OrderDetailBusiness(UnitOfWork unitOfWork)
+         {
+             _unitOfWork = unitOfWork;
+         }
+ */
         public async Task<IEventsAppResult> CreateOrderDetailAsync(OrderDetail orderDetail)
         {
             try
@@ -78,31 +82,16 @@ namespace Events.Business.Business
             try
             {
                 var orderDetails = await _unitOfWork.OrderDetailRepository.GetAllAsync();
-                if (!orderDetails.Any())
+                foreach (var orderdetail in orderDetails)
+                {
+                    orderdetail.Order = await AssignOrdertoOrderDetail(orderdetail);
+                    orderdetail.Event = await AssignEventtoOrderDetail(orderdetail);
+                }
+                if (orderDetails == null)
                 {
                     return new EventsAppResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA__MSG);
                 }
-
-                var result = orderDetails.Select(od => new OrderDetailDto
-                {
-                    OrderDetailId = od.OrderDetailId,
-                    Quantity = od.Quantity,
-                    Price = od.Price,
-                    Event = new EventDto
-                    {
-                        Name = od.Event.Name,
-                        Location = od.Event.Location,
-                        StartDate = od.Event.StartDate,
-                        EndDate = od.Event.EndDate
-                    },
-                    Order = new OrderDto
-                    {
-                        Code = od.Order.Code,
-                        PaymentStatus = od.Order.PaymentStatus
-                    }
-                }).ToList();
-
-                return new EventsAppResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result);
+                return new EventsAppResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, orderDetails);
             }
             catch (Exception ex)
             {
@@ -171,6 +160,17 @@ namespace Events.Business.Business
             {
                 return new EventsAppResult(Const.ERROR_EXCEPTION, ex.ToString());
             }
+        }
+
+        private async Task<Event> AssignEventtoOrderDetail(OrderDetail orderdetail)
+        {
+            var result = await _eventBusiness.GetEventById(orderdetail.OrderId);
+            return (Event)result.Data;
+        }
+        private async Task<Order> AssignOrdertoOrderDetail(OrderDetail orderdetail)
+        {
+            var result = await _orderBusiness.GetOrderById(orderdetail.OrderId);
+            return (Order)result.Data;
         }
     }
 }

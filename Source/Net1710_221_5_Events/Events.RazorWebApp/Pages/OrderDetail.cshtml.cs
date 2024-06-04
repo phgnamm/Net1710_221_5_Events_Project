@@ -15,8 +15,9 @@ namespace Events.RazorWebApp.Pages
         public string Message { get; set; } = default;
         [BindProperty]
         public OrderDetail OrderDetail { get; set; } = default;
-        public List<OrderDetailDto> OrderDetails { get; set; } = new List<OrderDetailDto>();
+        public List<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
         public List<Event> Events { get; set; } = new List<Event>();
+        public List<Order> Orders { get; set; } = new List<Order>();
 
         public void OnGet()
         {
@@ -40,16 +41,12 @@ namespace Events.RazorWebApp.Pages
             return RedirectToPage();
         }
 
-        private List<OrderDetailDto> GetOrderDetails()
+        private List<OrderDetail> GetOrderDetails()
         {
             var orderDetailResult = _orderDetailBusiness.GetAllOrderDetailsAsync().Result;
-
-            if (orderDetailResult.Status == Const.SUCCESS_READ_CODE && orderDetailResult.Data != null)
-            {
-                var orderDetails = (List<OrderDetailDto>)orderDetailResult.Data;
-                return orderDetails;
-            }
-            return new List<OrderDetailDto>();
+                return (List<OrderDetail>)orderDetailResult.Data;
+            
+           
         }
 
         private void SaveOrderDetail()
