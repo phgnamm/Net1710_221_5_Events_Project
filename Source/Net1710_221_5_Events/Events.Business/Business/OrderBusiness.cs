@@ -116,7 +116,7 @@ namespace Events.Business
             try
             {
                 var order = await _unitOfWork.OrderRepository.GetByIdAsync(id);
-                if (order != null)
+                if (order == null)
                 {
                     return new EventsAppResult
                     {
@@ -163,6 +163,7 @@ namespace Events.Business
                 existOrder.PaymentStatus = updateOrder.PaymentStatus;
                 existOrder.PaymentMethod = updateOrder.PaymentMethod;
                 existOrder.PaymentDate = updateOrder.PaymentDate;
+                existOrder.Status = updateOrder.Status;
 
                 // save order
                 await _unitOfWork.OrderRepository.UpdateAsync(existOrder);

@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Events.RazorWebApp", "Event
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Events.Common", "Events.Constant\Events.Common.csproj", "{9F1B0940-8A3B-4DA9-9753-E2714F6CE2F4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Events.WpfApp", "Events.WpfApp\Events.WpfApp.csproj", "{34B85FB4-D20C-4CCA-8265-9EB58FCF71B7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Events.WpfApp", "Events.WpfApp\Events.WpfApp.csproj", "{D36F0543-D337-4490-908A-9167EBF92393}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

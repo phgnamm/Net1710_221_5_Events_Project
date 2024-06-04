@@ -87,6 +87,7 @@ namespace Events.Business.Business
             try
             {
                 var events = await _unitOfWork.EventRepository.GetAllAsync();
+                //var events = allEvents.Where(e => e.IsDelete == false);
                 if (!events.Any())
                 {
                     return new EventsAppResult
@@ -120,7 +121,7 @@ namespace Events.Business.Business
 
                 var ev = await _unitOfWork.EventRepository.GetByIdAsync(id);
 
-                if (ev != null)
+                if (ev == null)
                 {
                     return new EventsAppResult
                     {

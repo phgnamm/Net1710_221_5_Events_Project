@@ -1,0 +1,197 @@
+﻿@page
+@model Events.RazorWebApp.Pages.EventModel
+
+@{
+    ViewData["Title"] = "List event";
+    var events = Model.Events;
+}
+
+<div class="text-center">
+    <h1 class="display-6">Events</h1>
+</div>
+
+<div class="row">
+    <div class="col-md-12 text-end">
+        <button type="button" class="btn btn-primary" onclick="add();">
+            Add
+        </button>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-striped table-bordered table-hover">
+            <thead>
+                <tr class="card-header">
+                    <th class="card-title text-center">Name</th>
+                    <th class="card-title text-center">Location</th>
+                    <th class="card-title text-center">Description</th>
+                    <th class="card-title text-center">StartDate</th>
+                    <th class="card-title text-center">OpenTicket</th>
+                    <th class="card-title text-center">TicketPrice</th>
+                    <th class="card-title text-center">Quantity</th>
+                    <th class="card-title text-center">OperatorName</th>
+                    <th class="card-title text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="tblcurrencyList">
+                @if (events.Count > 0)
+                {
+                    foreach (var item in events)
+                    {
+                        <tr>
+                            <td>@item.Name</td>
+                            <td>@item.Location</td>
+                            <td>@item.Description</td>
+                            <td>@item.StartDate</td>
+                            <td>@item.OpenTicket</td>
+                            <td>@item.TicketPrice</td>
+                            <td>@item.Quantity</td>
+                            <td>@item.OperatorName</td>
+                            <td class="text-center">
+                                <div class="d-flex justify-content-center">
+                                    @* <button type="button" class="btn btn-warning me-2" onclick="openEditModal('@orderDetail.OrderDetailId', '@orderDetail.Quantity', '@orderDetail.Price')">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </button> *@
+                                    @* <form method="post" asp-page-handler="Delete" asp-route-id="@orderDetail.OrderDetailId">
+                                        <button type="submit" class="btn btn-danger me-2">
+                                            <i class="fas fa-trash-alt"></i> Delete
+                                        </button>
+                                    </form> *@
+                                    <button type="button" class="btn btn-info me-2" onclick="openDetailModal('@item.EventId')">
+                                        <i class="fas fa-info-circle"></i> Detail
+                                    </button>
+                                </div>
+
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@*-------------------DETAIL----------------*@
+<div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            @using (Html.BeginForm(null, null, FormMethod.Post, new { name = "frm", id = "frm" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="modal-header">
+                    <h5 class="modal-title" id="eventModalLabel">Event</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="eventModalContent"></div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group row">
+                                <div class="col-md-6">
+                                    <label for="quantity">Quantity</label>
+                                    <input asp-for="Event.Quantity" class="form-control" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="price">Price</label>
+                                    <input asp-for="Event.TicketPrice" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group row">
+                                <div class="col-md-6">
+                                    <label for="eventId">Event ID</label>
+                                    <input asp-for="Event.EventId" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <label>@Model.Message</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="btSave" type="submit" class="btn btn-primary">Save</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="eventEditModal" tabindex="-1" aria-labelledby="eventEditModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            @using (Html.BeginForm(null, null, FormMethod.Post, new { name = "frm", id = "frm" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="modal-header">
+                    <h5 class="modal-title" id="eventModalLabel">Event</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="eventModalContent"></div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group row">
+                                <div class="col-md-6">
+                                    <label for="1">Code</label>                                    
+                                    <input asp-for="Event.EventId" class="form-control" />
+                                </div>                                
+                                @* <div class="col-md-6">
+                                    <label for="1">Active</label>                                                                        
+                                    <input asp-for="Currency.IsActive" type="checkbox" />
+                                    <input type="checkbox" id="Currency_IsActive" name="Currency.IsActive" class="form-check-input" />
+                                    <input type="hidden" id="Currency_IsActive" value="@Model.Currency?.IsActive" />
+                                </div> *@
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group row">                                
+                                <div class="col-md-6">
+                                    <label for="1">Name</label>                                    
+                                    <input asp-for="Event.Name" class="form-control" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="1">Nation</label>                                    
+                                    <input asp-for="Event.Location" class="form-control" />
+                                </div>                                
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <label>@Model.Message</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="btSave" type="submit" class="btn btn-primary">Save</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script type="text/javascript">
+        function add() {
+            $('#eventDetailModal').modal('show');
+        }
+        function openDetailModal(eventId) {
+            $('#eventModal').modal('show');
+        }
+        // function openDetailModal(orderDetailId, quantity, price) {
+        //     $('#eventModal').modal('show');
+
+        //     // Update modal fields with data from the row
+        //     $('#editQuantity').val(quantity);
+        //     $('#editPrice').val(price);
+
+        //     // Update the form action with the correct OrderDetailId
+        //     $('#editFrm').attr('action', '/OrderDetail/Edit/' + orderDetailId);
+
+        // }
+    </script>
+}

@@ -1,0 +1,60 @@
+﻿@page "{id:int}"
+@model Events.RazorWebApp.Pages.OrderPage.DetailsModel
+
+@{
+    ViewData["Title"] = "Order Details";
+}
+
+<h1>Order Details</h1>
+
+<div>
+    <a asp-page="./Index">Back to Orders</a>
+</div>
+
+@if (Model.Order == null)
+{
+    <div class="alert alert-danger" role="alert">
+        Order not found.
+    </div>
+}
+else
+{
+    <table class="table table-striped">
+        <tr>
+            <th>Order Code</th>
+            <td>@Model.Order.Code</td>
+        </tr>
+        <tr>
+            <th>Description</th>
+            <td>@Model.Order.Description</td>
+        </tr>
+        <tr>
+            <th>Ticket Quantity</th>
+            <td>@Model.Order.TicketQuantity</td>
+        </tr>
+        <tr>
+            <th>Total Amount</th>
+            <td>@Model.Order.TotalAmount.ToString("C")</td>
+        </tr>
+        <tr>
+            <th>Payment Status</th>
+            <td>@Model.Order.PaymentStatus</td>
+        </tr>
+        <tr>
+            <th>Payment Date</th>
+            <td>@Model.Order.PaymentDate.ToString("yyyy-MM-dd")</td>
+        </tr>
+        <tr>
+            <th>Payment Method</th>
+            <td>@Model.Order.PaymentMethod</td>
+        </tr>
+        <tr>
+            <th>Status</th>
+            <td>@Model.Order.Status</td>
+        </tr>
+    </table>
+    <div>
+        <a asp-page="./Edit" asp-route-id="@Model.Order.OrderId" class="btn btn-primary">Edit</a>
+        <a asp-page="./Delete" asp-route-id="@Model.Order.OrderId" class="btn btn-danger">Delete</a>
+    </div>
+}
