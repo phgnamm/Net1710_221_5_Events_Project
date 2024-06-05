@@ -29,7 +29,7 @@
                     </Grid.ColumnDefinitions>
 
                     <Label Grid.Row="0" Grid.Column="0" Content="Event Name" VerticalAlignment="Center" Height="26"/>
-                    <ComboBox x:Name="cmbEventName" Grid.Row="0" Grid.Column="1" ItemsSource="{Binding OrderDetails}" DisplayMemberPath="Name" SelectedValuePath="EventId" Margin="5,5,5,5"/>
+                    <ComboBox x:Name="cmbEventName" Grid.Row="0" Grid.Column="1" DisplayMemberPath="Name" SelectedValuePath="EventId" Margin="5,5,5,5"/>
 
                     <Label Grid.Row="1" Grid.Column="0" Content="Quantity" VerticalAlignment="Center" Height="28" Margin="0,0,1,0"/>
                     <TextBox x:Name="txtQuantity" Grid.Row="1" Grid.Column="1" Text="{Binding Path=Quantity, Mode=TwoWay}" Margin="5,5,5,5"/>
@@ -38,7 +38,7 @@
                     <TextBox x:Name="txtPrice" Grid.Row="2" Grid.Column="1" Text="{Binding Path=Price, Mode=TwoWay}" Margin="5,5,5,5"/>
 
                     <Label Grid.Row="3" Grid.Column="0" Content="Order Code" VerticalAlignment="Center" Height="26"/>
-                    <ComboBox x:Name="cmbOrderCode" Grid.Row="3" Grid.Column="1" ItemsSource="{Binding Orders}" DisplayMemberPath="Code" SelectedValuePath="OrderId" Margin="5,5,5,5"/>
+                    <ComboBox x:Name="cmbOrderCode" Grid.Row="3" Grid.Column="1" DisplayMemberPath="Code" SelectedValuePath="OrderId" Margin="5,5,5,5"/>
                 </Grid>
             </GroupBox>
             <StackPanel Height="40" Orientation="Horizontal" HorizontalAlignment="Right">
@@ -46,7 +46,7 @@
                 <Button x:Name="ButtonCancel" Content="Cancel" Height="30" Width="80" Click="ButtonCancel_Click"/>
             </StackPanel>
             <StackPanel Height="210">
-                <DataGrid x:Name="grdCurrency" AutoGenerateColumns="False" ItemsSource="{Binding OrderDetails}" CanUserAddRows="False" Height="200" Margin="10" SelectionMode="Single" SelectionUnit="FullRow">
+                <DataGrid x:Name="grdCurrency" AutoGenerateColumns="False" ItemsSource="{Binding OrderDetails}" CanUserAddRows="False" Height="200" Margin="10" MouseDoubleClick="grdCurrency_MouseDouble_Click" SelectionMode="Single" SelectionUnit="FullRow">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}" IsReadOnly="True"/>
                         <DataGridTextColumn Header="Price" Binding="{Binding Price}" IsReadOnly="True"/>
