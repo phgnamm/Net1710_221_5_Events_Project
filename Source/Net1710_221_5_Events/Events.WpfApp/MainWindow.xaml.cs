@@ -28,5 +28,11 @@ namespace Events.WpfApp
             p.Owner = this;
             p.Show();
         }
+        private void Open_wEvent_Click(object sender, RoutedEventArgs e)
+        {
+            var p = new wEvent();
+            p.Owner = this;
+            p.Show();
+        }
     }
 }

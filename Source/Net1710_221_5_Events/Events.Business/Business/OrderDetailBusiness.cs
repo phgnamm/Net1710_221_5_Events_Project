@@ -84,8 +84,9 @@ namespace Events.Business.Business
                 var orderDetails = await _unitOfWork.OrderDetailRepository.GetAllAsync();
                 foreach (var orderdetail in orderDetails)
                 {
-                    orderdetail.Order = await AssignOrdertoOrderDetail(orderdetail);
                     orderdetail.Event = await AssignEventtoOrderDetail(orderdetail);
+                    orderdetail.Order = await AssignOrdertoOrderDetail(orderdetail);
+                    
                 }
                 if (orderDetails == null)
                 {
@@ -164,7 +165,7 @@ namespace Events.Business.Business
 
         private async Task<Event> AssignEventtoOrderDetail(OrderDetail orderdetail)
         {
-            var result = await _eventBusiness.GetEventById(orderdetail.OrderId);
+            var result = await _eventBusiness.GetEventById(orderdetail.EventId);
             return (Event)result.Data;
         }
         private async Task<Order> AssignOrdertoOrderDetail(OrderDetail orderdetail)

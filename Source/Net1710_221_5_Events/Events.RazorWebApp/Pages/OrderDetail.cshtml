@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Order Details";
     var orderDetails = Model.OrderDetails;
+    var message = Model.Message;
 }
 
 <div class="text-center">
@@ -40,7 +41,7 @@
                     foreach (var orderDetail in orderDetails)
                     {
                         <tr>
-                           @*  <td class="text-center">@orderDetail.OrderDetailId</td> *@
+                            @*  <td class="text-center">@orderDetail.OrderDetailId</td> *@
                             <td class="text-center">@orderDetail.Quantity</td>
                             <td class="text-center">@orderDetail.Price</td>
                             <td class="text-center">@orderDetail.Event?.Name</td>
@@ -51,15 +52,15 @@
                             <td class="text-center">@orderDetail.Order?.PaymentStatus</td>
                             <td class="text-center">
                                 <div class="d-flex justify-content-center">
-                                    <button type="button" class="btn btn-warning me-2" onclick="openEditModal('@orderDetail.OrderDetailId', '@orderDetail.Quantity', '@orderDetail.Price')">
+                                    <button type="button" class="btn btn-warning me-2" onclick="openEditModal('@orderDetail.OrderDetailId', '@orderDetail.Quantity', '@orderDetail.Price','@orderDetail.OrderId')">
                                         <i class="fas fa-edit"></i> Edit
                                     </button>
-                                    <form method="post" asp-page-handler="Delete" asp-route-id="@orderDetail.OrderDetailId">
+                                    <form method="post" asp-page-handler="Delete" asp-route-id="@orderDetail.OrderDetailId" onsubmit="return confirm('Are you sure you want to delete this order?');">
                                         <button type="submit" class="btn btn-danger me-2">
                                             <i class="fas fa-trash-alt"></i> Delete
                                         </button>
                                     </form>
-                                    <button type="button" class="btn btn-info me-2" onclick="openDetailModal('@orderDetail.OrderDetailId')">
+                                    <button type="button" class="btn btn-info me-2" onclick="openDetailModal('@orderDetail.Order.Code','@orderDetail.Order.Description','@orderDetail.Order.TicketQuantity','@orderDetail.Order.TotalAmount','@orderDetail.Order.PaymentStatus','@orderDetail.Order.PaymentDate','@orderDetail.Order.PaymentMethod')">
                                         <i class="fas fa-info-circle"></i> Detail
                                     </button>
                                 </div>
@@ -108,22 +109,91 @@
                         <div class="col-md-12">
                             <div class="form-group row">
                                 <div class="col-md-6">
-                                    <label for="eventId">Event ID</label>
-                                    <input asp-for="OrderDetail.EventId" class="form-control" />
+                                    <label for="editEvent">Events</label>
+                                    <select asp-for="OrderDetail.EventId" id="editEvent" class="form-control">
+                                        @foreach (var item in Model.Events)
+                                        {
+                                            <option value="@item.EventId">@item.Name</option>
+                                        }
+                                    </select>
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="orderId">Order ID</label>
-                                    <input asp-for="OrderDetail.OrderId" class="form-control" />
+                                    <label for="editEvent">Orders Code</label>
+                                    <select asp-for="OrderDetail.OrderId" id="editEvent" class="form-control">
+                                        @foreach (var item in Model.Orders)
+                                        {
+                                            <option value="@item.OrderId">@item.Code</option>
+                                        }
+                                    </select>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-12">
-                            <label>@Model.Message</label>
-                        </div>
+                       @*  <div class="col-md-12">
+                            <label>@message</label>
+                        </div> *@
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button id="btSave" type="submit" class="btn btn-primary">Save</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+@*-------------------DetailOrder---------------------*@
+<div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="orderDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            @using (Html.BeginForm(null, null, FormMethod.Post, new { name = "frm", id = "frm" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="modal-header">
+                    <h5 class="modal-title" id="orderDetailModalLabel">Order Detail Transaction</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="orderDetailModalContent"></div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group row">
+                                <div class="col-md-6">
+                                    <label for="oCode">Code</label>
+                                    <input id="oCode" class="form-control" readonly />
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="oDescription">Description</label>
+                                    <input id="oDescription" class="form-control" readonly />
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="oTicket">Ticket Quantity</label>
+                                    <input id="oTicket" class="form-control" readonly />
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="oTotal">Total Amount</label>
+                                    <input id="oTotal" class="form-control" readonly />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group row">
+                                <div class="col-md-6">
+                                    <label for="oPS">Payment Status</label>
+                                    <input id="oPS" class="form-control" readonly />
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="oPD">Payment Date</label>
+                                    <input id="oPD" class="form-control" readonly />
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="oPM">Payment Method</label>
+                                    <input id="oPM" class="form-control" readonly />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             }
@@ -135,9 +205,7 @@
 <div class="modal fade" id="editOrderDetailModal" tabindex="-1" aria-labelledby="editOrderDetailModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            @using (Html.BeginForm(null, null, FormMethod.Post, new { name = "editFrm", id = "editFrm" }))
-            {
-                @Html.AntiForgeryToken()
+            <form method="post" asp-page-handler="Edit">
                 <div class="modal-header">
                     <h5 class="modal-title" id="editOrderDetailModalLabel">Edit Order Detail</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -154,18 +222,34 @@
                                     <label for="editPrice">Price</label>
                                     <input asp-for="OrderDetail.Price" id="editPrice" class="form-control" />
                                 </div>
+                                <div class="col-md-6">
+                                    <label for="editEvent">Events</label>
+                                    <select asp-for="OrderDetail.EventId" id="editEvent" class="form-control">
+                                        @foreach (var item in Model.Events)
+                                        {
+                                            <option value="@item.EventId">@item.Name</option>
+                                        }
+                                    </select>
+                                </div>
                             </div>
                         </div>
+                     @*     <div class="col-md-12">
+                        <label>@Model.Message</label>
+                        </div> *@
                     </div>
                 </div>
+                <input asp-for="OrderDetail.OrderDetailId" type="hidden" id="idOrderDetail" class="form-control" />
+                <input asp-for="OrderDetail.OrderId" type="hidden" id="idOrder" class="form-control" />
                 <div class="modal-footer">
                     <button id="editBtSave" type="submit" class="btn btn-primary">Save</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
-            }
+            </form>
         </div>
     </div>
 </div>
+
+
 
 @section scripts
 {
@@ -173,16 +257,38 @@
         function add() {
             $('#orderDetailModal').modal('show');
         }
-        function openEditModal(orderDetailId, quantity, price) {
+        function openEditModal(orderDetailId, quantity, price, orderID) {
             $('#editOrderDetailModal').modal('show');
 
             // Update modal fields with data from the row
             $('#editQuantity').val(quantity);
             $('#editPrice').val(price);
+            $('#idOrderDetail').val(orderDetailId);
+            $('#idOrder').val(orderID);
 
             // Update the form action with the correct OrderDetailId
-            $('#editFrm').attr('action', '/OrderDetail/Edit/' + orderDetailId);
-
+            $('#editFrm').attr('action', 'OrderDetail/Post');
         }
+        function openDetailModal(code, descrip, ticket, total, status, date, method) {
+            $('#detailModal').modal('show');
+
+            // Update modal fields with data from the row
+            $('#oCode').val(code);
+            $('#oDescription').val(descrip);
+            $('#oTicket').val(ticket);
+            $('#oTotal').val(total);
+            $('#oPS').val(status);
+            $('#oPD').val(date);
+            $('#oPM').val(method);
+        }
+            // Update the form action with the correct OrderDetailId
+
+            //Confirm delete
+            $(document).ready(function () {
+                var message = '@message';
+                if (message) {
+                    alert(message);
+                }
+            });      
     </script>
 }

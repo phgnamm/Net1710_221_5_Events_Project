@@ -1,3 +1,4 @@
+using Events.Business;
 using Events.Business.Business;
 using Events.Common;
 using Events.Data.DTOs;
@@ -11,7 +12,9 @@ namespace Events.RazorWebApp.Pages
     public class OrderDetailModel : PageModel
     {
         private readonly IOrderDetailBusiness _orderDetailBusiness = new OrderDetailBusiness();
-
+        private readonly IEventBusiness _eventBusiness = new EventBusiness();
+        private readonly IOrderBusiness _orderBusiness = new OrderBusiness();
+        [TempData]
         public string Message { get; set; } = default;
         [BindProperty]
         public OrderDetail OrderDetail { get; set; } = default;
@@ -22,6 +25,8 @@ namespace Events.RazorWebApp.Pages
         public void OnGet()
         {
             OrderDetails = GetOrderDetails();
+            Events = GetEvents();
+            Orders = GetOrders();
         }
 
         public IActionResult OnPost()
@@ -88,6 +93,30 @@ namespace Events.RazorWebApp.Pages
             {
                 this.Message = "Error system";
             }
+        }
+
+        //getevent
+        private List<Event> GetEvents()
+        {
+            var eventResult = _eventBusiness.GetAllEvents();
+
+            if (eventResult.Status > 0 && eventResult.Result.Data != null)
+            {
+                var currencies = (List<Event>)eventResult.Result.Data;
+                return currencies;
+            }
+            return new List<Event>();
+        }
+        private List<Order> GetOrders()
+        {
+            var orderResult = _orderBusiness.GetAllOrders();
+
+            if (orderResult.Status > 0 && orderResult.Result.Data != null)
+            {
+                var currencies = (List<Order>)orderResult.Result.Data;
+                return currencies;
+            }
+            return new List<Order>();
         }
     }
 }
