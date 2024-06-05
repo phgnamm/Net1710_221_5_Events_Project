@@ -9,6 +9,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Xml.Serialization;
 
 namespace Events.WpfApp
 {
@@ -21,7 +22,12 @@ namespace Events.WpfApp
         {
             InitializeComponent();
         }
-
+        private void Open_wOrderDetail_Click(object sender, RoutedEventArgs e)
+        {
+            var p= new wOrderDetail();
+            p.Owner = this;
+            p.Show();
+        }
         private void Open_wEvent_Click(object sender, RoutedEventArgs e)
         {
             var p = new wEvent();

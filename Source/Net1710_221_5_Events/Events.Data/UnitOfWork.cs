@@ -14,14 +14,9 @@ namespace Events.Data
         private EventRepository _eventRepository;
         private OrderRepository _orderRepository;
         private OrderDetailRepository _orderDetailRepository;
-
-        //public UnitOfWork(Net17102215EventsContext unitOfWorkContext)
-        //{
-        //    _unitOfWorkContext = unitOfWorkContext;
-        //}
         public UnitOfWork()
         {
-            _unitOfWorkContext = new Net17102215EventsContext();
+            _unitOfWorkContext ??= new Net17102215EventsContext();
         }
         public EventRepository EventRepository => _eventRepository ??= new EventRepository(_unitOfWorkContext);
         public OrderRepository OrderRepository => _orderRepository ??= new OrderRepository(_unitOfWorkContext);
