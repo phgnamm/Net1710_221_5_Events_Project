@@ -31,11 +31,6 @@ namespace Events.Business.Business
             _orderBusiness = new OrderBusiness();
             _eventBusiness = new EventBusiness();
         }
-        /* public OrderDetailBusiness(UnitOfWork unitOfWork)
-         {
-             _unitOfWork = unitOfWork;
-         }
- */
         public async Task<IEventsAppResult> CreateOrderDetailAsync(OrderDetail orderDetail)
         {
             try
@@ -86,7 +81,7 @@ namespace Events.Business.Business
                 {
                     orderdetail.Event = await AssignEventtoOrderDetail(orderdetail);
                     orderdetail.Order = await AssignOrdertoOrderDetail(orderdetail);
-                    
+
                 }
                 if (orderDetails == null)
                 {
@@ -109,7 +104,7 @@ namespace Events.Business.Business
                 if (orderDetail == null)
                 {
                     return new EventsAppResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA__MSG);
-                }           
+                }
                 return new EventsAppResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, orderDetail);
             }
             catch (Exception ex)
