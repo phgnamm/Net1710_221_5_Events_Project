@@ -41,7 +41,7 @@ namespace Events.Business.Business
             try
             {
                 await _unitOfWork.OrderDetailRepository.CreateAsync(orderDetail);
-                return new EventsAppResult(0, "OrderDetail created successfully", orderDetail);
+                return new EventsAppResult(Const.SUCCESS_CREATE_CODE, "OrderDetail created successfully", orderDetail);
             }
             catch (Exception ex)
             {
@@ -109,28 +109,8 @@ namespace Events.Business.Business
                 if (orderDetail == null)
                 {
                     return new EventsAppResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA__MSG);
-                }
-
-                var result = new
-                {
-                    orderDetail.OrderDetailId,
-                    orderDetail.Quantity,
-                    orderDetail.Price,
-                    Event = new
-                    {
-                        orderDetail.Event.Name,
-                        orderDetail.Event.Location,
-                        orderDetail.Event.StartDate,
-                        orderDetail.Event.EndDate
-                    },
-                    Order = new
-                    {
-                        orderDetail.Order.Code,
-                        orderDetail.Order.PaymentStatus
-                    }
-                };
-
-                return new EventsAppResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result);
+                }           
+                return new EventsAppResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, orderDetail);
             }
             catch (Exception ex)
             {
