@@ -11,7 +11,7 @@
             <GroupBox Header="Currency Form" Margin="10">
                 <Grid Height="50">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="80"/>
@@ -25,13 +25,8 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <Label Grid.Column="0" Grid.Row="0" Content="Name" HorizontalAlignment="Left" VerticalContentAlignment="Center" />
-                    <TextBox Grid.Column="1" Grid.Row="0" x:Name="txtCurrencyCode" Height="25" Text="{Binding Path=Currency.CurrencyCode, Mode=TwoWay}"  Margin="5"  Width="180" HorizontalAlignment="Left"/>
-                    <Label Grid.Column="2" Grid.Row="0" Content="EventID" HorizontalAlignment="Left" VerticalContentAlignment="Center" />
-                    <TextBox Grid.Row="0" Grid.Column="3" x:Name="txtCurrencyName" Height="25" Text="{Binding Path=Currency.CurrencyName, Mode=TwoWay}"  Margin="5"  Width="180" HorizontalAlignment="Left"/>
-                    <Label Grid.Column="4" Grid.Row="0" Content="Nation" HorizontalAlignment="Left" VerticalContentAlignment="Center" />
-                    <TextBox Grid.Column="5" Grid.Row="0" x:Name="txtNationCode" Height="25" Text="{Binding Path=Currency.NationCode, Mode=TwoWay}"  Margin="5"  Width="180" HorizontalAlignment="Left"/>
-                    <Label Grid.Column="6" Grid.Row="0" Content="Active" HorizontalAlignment="Left" VerticalContentAlignment="Center" />
-                    <CheckBox Grid.Column="7" Grid.Row="0" x:Name="chkIsActive" Height="25" IsChecked="{Binding ElementName=IsActive, Path=IsCheckBoxChecked}"  Margin="5"  Width="180" HorizontalAlignment="Left"/>
+                    <TextBox Grid.Column="1" Grid.Row="0" x:Name="txtCurrencyCode" Height="25" Text="{Binding Path=OrderDetail.Currency.CurrencyCode, Mode=TwoWay}"  Margin="5"  Width="180" HorizontalAlignment="Left"/>
+                    <!-- Similar bindings for other properties -->
                 </Grid>
             </GroupBox>
             <StackPanel Height="40" Orientation="Horizontal" HorizontalAlignment="Right">
@@ -39,31 +34,27 @@
                 <Button x:Name="ButtonCancel" Content="Cancel" Height="30" Width="80" Click="ButtonCancel_Click"/>
             </StackPanel>
             <StackPanel Height="210">
-                <DataGrid x:Name="grdCurrency" AutoGenerateColumns="False" ItemsSource="{Binding OrderDetail}" CanUserAddRows="False" Height="200" Margin="10" MouseDoubleClick="grdCurrency_MouseDouble_Click" SelectionMode="Single" SelectionUnit="FullRow">
+                <DataGrid x:Name="grdCurrency" AutoGenerateColumns="False" ItemsSource="{Binding OrderDetails}" CanUserAddRows="False" Height="200" Margin="10" SelectionMode="Single" SelectionUnit="FullRow">
                     <DataGrid.Columns>
-                        <!--<DataGridTextColumn Header="Code" Binding="{Binding Path=Id}" Visibility="Hidden"/>-->
-                        <DataGridTextColumn Header="Code" Binding="{Binding Path=Price}" Visibility="Visible"/>
-                        <DataGridTextColumn Header="Name" Binding="{Binding Path=Quantity}" Width="100"  IsReadOnly="True"/>
-                        <DataGridTextColumn Header="Nation" Binding="{Binding Path=NationCode}" Width="50"  IsReadOnly="True"/>
-                        <DataGridTextColumn Header="Active" Binding="{Binding Path=IsActive}" Width="50"  IsReadOnly="True"/>
-                        <DataGridTemplateColumn Width="50">
+                        <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="Price" Binding="{Binding Price}" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="Event Name" Binding="{Binding Event.EventName}" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="Event Location" Binding="{Binding Event.Location}" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="Event Start Date" Binding="{Binding Event.StartDate}" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="Event End Date" Binding="{Binding Event.EndDate}" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="Order Code" Binding="{Binding Order.OrderCode}" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="Payment Status" Binding="{Binding PaymentStatus}" IsReadOnly="True"/>
+                        <DataGridTemplateColumn Header="Actions" Width="*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button Content="X" x:Name="ButtonDelete" CommandParameter="{Binding Path=CurrencyCode}" Click="grdCurrency_ButtonDelete_Click"/>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button Content="Edit" Command="{Binding DataContext.EditCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}"/>
+                                        <Button Content="Delete" Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}"/>
+                                        <Button Content="Details" Command="{Binding DataContext.DetailsCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}"/>
+                                    </StackPanel>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
-
-                        <!--<DataGridTemplateColumn Width="50">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <Button Content="Delete" x:Name="ButtonDelete" CommandParameter="{Binding Path=Id}"
-                                Command="{Binding Path=DataContext.DeleteCommand, RelativeSource={RelativeSource FindAncestor,
-                                        AncestorType=Window}}"/>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>-->
-
                     </DataGrid.Columns>
                 </DataGrid>
             </StackPanel>
