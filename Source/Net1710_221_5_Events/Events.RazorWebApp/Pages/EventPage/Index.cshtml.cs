@@ -1,29 +1,32 @@
-using Events.Business;
-using Events.Business.Business;
-using Events.Common;
-using Events.Data.Models;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
+using Events.Data.Models;
+using Events.Business.Business;
 
 namespace Events.RazorWebApp.Pages.EventPage
 {
     public class IndexModel : PageModel
     {
+        private readonly IEventBusiness business;
 
-        private readonly IEventBusiness _eventBusiness = new EventBusiness();
+        public IndexModel()
+        {
+            business ??= new EventBusiness();
+        }
 
-        public IList<Event> Events { get; set; } = new List<Event>();
+        public IList<Event> Event { get;set; } = default!;
 
         public async Task OnGetAsync()
         {
-            var result = await _eventBusiness.GetAllEvents();
-            if (result.Status == Const.SUCCESS_READ_CODE)
+            var result = await business.GetAllEvents();
+            if (result != null && result.Status > 0 && result.Data != null) 
             {
-                Events = (IList<Event>)result.Data;
-            }
-            else
-            {
-                Events = new List<Event>();
+                Event = result.Data as List<Event>;
             }
         }
     }
