@@ -1,40 +1,52 @@
-using Events.Business.Business;
-using Events.Common;
-using Events.Data.Models;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
+using Events.Data.Models;
+using Events.Business.Business;
+using Events.Common;
 
 namespace Events.RazorWebApp.Pages.EventPage
 {
     public class DeleteModel : PageModel
     {
-        private readonly IEventBusiness _eventBusiness = new EventBusiness();
+        private readonly IEventBusiness business;
+
+        public DeleteModel()
+        {
+            business ??= new EventBusiness();
+        }
 
         [BindProperty]
-        public Event Event { get; set; }
+        public Event Event { get; set; } = default!;
 
-        public async Task<IActionResult> OnGetAsync(int id)
+        public async Task<IActionResult> OnGetAsync(int? id)
         {
-            var result = await _eventBusiness.GetEventById(id);
-            if (result.Status == Const.SUCCESS_READ_CODE)
-            {
-                Event = (Event)result.Data;
-                if (Event == null)
-                {
-                    return NotFound();
-                }
-            }
-            else
+            if (id == null)
             {
                 return NotFound();
             }
 
-            return Page();
+            var result = await business.GetEventById(id.Value);
+            if (result != null && result.Status > 0 && result.Data != null)
+            {
+                Event = result.Data as Event;
+                return Page();
+            }
+            return NotFound();
         }
 
-        public async Task<IActionResult> OnPostAsync(int id)
+        public async Task<IActionResult> OnPostAsync(int? id)
         {
-            var result = await _eventBusiness.DeleteEventById(id);
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var result = await business.DeleteEventById(id.Value);
             if (result.Status == Const.SUCCESS_DELETE_CODE)
             {
                 return RedirectToPage("./Index");

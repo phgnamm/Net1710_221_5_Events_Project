@@ -1,35 +1,43 @@
-using Events.Business.Business;
-using Events.Common;
-using Events.Data.Models;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Events.Data.Models;
+using Events.Business.Business;
 
 namespace Events.RazorWebApp.Pages.EventPage
 {
     public class CreateModel : PageModel
     {
-        private readonly IEventBusiness _eventBusiness = new EventBusiness();
+        private readonly IEventBusiness business;
 
-        [BindProperty]
-        public Event Event { get; set; }
+        public CreateModel()
+        {
+            business ??= new EventBusiness();
+        }
 
         public IActionResult OnGet()
         {
             return Page();
         }
 
+        [BindProperty]
+        public Event Event { get; set; } = default!;
+
+        // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
         public async Task<IActionResult> OnPostAsync()
         {
-            var result = await _eventBusiness.CreateNewEvent(Event);
-            if (result.Status == Const.SUCCESS_CREATE_CODE)
+            if (!ModelState.IsValid)
             {
-                return RedirectToPage("Index");
-            }
-            else
-            {
-                ModelState.AddModelError(string.Empty, "An error occurred while creating the Event.");
                 return Page();
             }
+
+            await business.CreateNewEvent(Event);
+
+            return RedirectToPage("./Index");
         }
     }
 }
