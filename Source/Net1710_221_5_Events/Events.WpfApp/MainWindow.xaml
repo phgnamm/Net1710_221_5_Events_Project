@@ -11,6 +11,7 @@
             <MenuItem Header="Menu" IsCheckable="False" FontSize="16">
                 <MenuItem Header="Event" IsCheckable="False" FontSize="12" Click="Open_wEvent_Click" />
                 <MenuItem Header="OrderDetail" IsCheckable="False" FontSize="12" Click="Open_wOrderDetail_Click" />
+                <MenuItem Header="Customer" IsCheckable="False" FontSize="12" Click="Open_wCustomer_Click" />
             </MenuItem>
         </Menu>
     </Grid>

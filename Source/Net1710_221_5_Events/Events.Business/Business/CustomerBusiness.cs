@@ -1,5 +1,6 @@
-﻿/*using Events.Business.Base;
+﻿using Events.Business.Base;
 using Events.Common;
+using Events.Data;
 using Events.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -12,30 +13,30 @@ namespace Events.Business.Business
 {
     public interface ICustomerBusiness
     {
-        Task<IEventsAppResult> Insert(Customer customer);
-        Task<IEventsAppResult> Delete(int customerId);
-        Task<IEventsAppResult> Read(int customerId);
-        Task<IEventsAppResult> ReadAll();
-        Task<IEventsAppResult> Update(Customer customer);
+        public Task<IEventsAppResult> GetAllCustomers();
+        public Task<IEventsAppResult> GetCustomer(int customerId);
+        public Task<IEventsAppResult> Create(Customer customer);
+        public Task<IEventsAppResult> Delete(int customerId);
+        public Task<IEventsAppResult> Update(Customer customer);
     }
     public class CustomerBusiness : ICustomerBusiness
     {
         //    private readonly Net17102215EventsContext _eventsContext;
-        private readonly CustomerDAO _DAO;
+        private readonly UnitOfWork _unitOfWork;
         public CustomerBusiness()
         {
             //   _eventsContext = eventsContext;
-            _DAO = new CustomerDAO();
+            _unitOfWork = new UnitOfWork();
         }
 
         public async Task<IEventsAppResult> Delete(int customerId)
         {
             try
             {
-                var currency = await _DAO.GetByIdAsync(customerId);
-                if (currency != null)
+                var customer = await _unitOfWork.CustomerRepository.GetByIdAsync(customerId);
+                if (customer != null)
                 {
-                    var result = await _DAO.RemoveAsync(currency);
+                    var result = await _unitOfWork.CustomerRepository.RemoveAsync(customer);
                     if (result)
                     {
                         return new EventsAppResult(Const.SUCCESS_DELETE_CODE, Const.SUCCESS_DELETE_MSG);
@@ -56,76 +57,90 @@ namespace Events.Business.Business
             }
         }
 
-        public async Task<IEventsAppResult> Insert(Customer customer)
+        public async Task<IEventsAppResult> Create(Customer customer)
         {
             try
             {
-                //
+                await _unitOfWork.CustomerRepository.CreateAsync(customer);
 
-                int result = await _DAO.CreateAsync(customer);
-                if (result > 0)
+                return new EventsAppResult
                 {
-                    return new EventsAppResult(Const.SUCCESS_CREATE_CODE, Const.SUCCESS_CREATE_MSG);
-                }
-                else
-                {
-                    return new EventsAppResult(Const.FAIL_CREATE_CODE, Const.FAIL_CREATE_MSG);
-                }
+                    Status = Const.SUCCESS_CREATE_CODE,
+                    Message = Const.SUCCESS_CREATE_MSG,
+                    Data = customer
+                };
             }
             catch (Exception ex)
             {
-                return new EventsAppResult(Const.ERROR_EXCEPTION, ex.ToString());
+                return new EventsAppResult
+                {
+                    Status = Const.ERROR_EXCEPTION,
+                    Message = ex.ToString(),
+                };
             }
         }
 
 
-        public async Task<IEventsAppResult> Read(int customerId)
+        public async Task<IEventsAppResult> GetCustomer(int customerId)
         {
 
             try
             {
-                #region Business rule
-                #endregion
 
-                var currency = await _DAO.GetByIdAsync(customerId);
+                var customer = await _unitOfWork.CustomerRepository.GetByIdAsync(customerId);
 
-                if (currency == null)
+                if (customer == null)
                 {
-                    return new EventsAppResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA__MSG);
+                    return new EventsAppResult
+                    {
+                        Status = Const.WARNING_NO_DATA_CODE,
+                        Message = Const.WARNING_NO_DATA__MSG
+                    };
                 }
-                else
+                return new EventsAppResult
                 {
-                    return new EventsAppResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, currency);
-                }
+                    Status = Const.SUCCESS_READ_CODE,
+                    Message = Const.SUCCESS_READ_MSG,
+                    Data = customer
+                };
             }
             catch (Exception ex)
             {
-                return new EventsAppResult(Const.ERROR_EXCEPTION, ex.Message);
+                return new EventsAppResult
+                {
+                    Status = Const.ERROR_EXCEPTION,
+                    Message = ex.ToString(),
+                };
             }
         }
 
-        public async Task<IEventsAppResult> ReadAll()
+        public async Task<IEventsAppResult> GetAllCustomers()
         {
             try
             {
-                #region Business rule
-                #endregion
-
-                //var currencies = _DAO.GetAll();
-                var currencies = await _DAO.GetAllAsync();
-
-                if (currencies == null)
+                var customers = await _unitOfWork.CustomerRepository.GetAllAsync();
+                if (!customers.Any())
                 {
-                    return new EventsAppResult(Const.WARNING_NO_DATA_CODE, Const.WARNING_NO_DATA__MSG);
+                    return new EventsAppResult
+                    {
+                        Status = Const.WARNING_NO_DATA_CODE,
+                        Message = Const.WARNING_NO_DATA__MSG,
+                    };
                 }
-                else
+                return new EventsAppResult()
                 {
-                    return new EventsAppResult(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, currencies);
-                }
+                    Status = Const.SUCCESS_READ_CODE,
+                    Message = Const.SUCCESS_READ_MSG,
+                    Data = customers.ToList()
+                };
             }
             catch (Exception ex)
             {
-                return new EventsAppResult(Const.ERROR_EXCEPTION, ex.Message);
+                return new EventsAppResult
+                {
+                    Status = Const.ERROR_EXCEPTION,
+                    Message = ex.ToString(),
+                };
             }
         }
 
@@ -133,21 +148,40 @@ namespace Events.Business.Business
         {
             try
             {
-                int result = await _DAO.UpdateAsync(customer);
-                if (result > 0)
+                var existCustomer = await _unitOfWork.CustomerRepository.GetByIdAsync(customer.CustomerId);
+
+                if (existCustomer == null)
                 {
-                    return new EventsAppResult(Const.SUCCESS_UPDATE_CODE, Const.SUCCESS_UPDATE_MSG);
+                    return new EventsAppResult
+                    {
+                        Status = Const.FAIL_UPDATE_CODE,
+                        Message = Const.FAIL_UPDATE_MSG
+                    };
                 }
-                else
+
+                existCustomer.FullName = customer.FullName;
+                existCustomer.Email = customer.Email;
+                existCustomer.PhoneNumber = customer.PhoneNumber;
+                existCustomer.Gender = customer.Gender;
+                existCustomer.DateOfBirth = customer.DateOfBirth;
+
+                await _unitOfWork.CustomerRepository.UpdateAsync(existCustomer);
+
+                return new EventsAppResult
                 {
-                    return new EventsAppResult(Const.FAIL_UPDATE_CODE, Const.FAIL_UPDATE_MSG);
-                }
+                    Status = Const.SUCCESS_UPDATE_CODE,
+                    Message = Const.SUCCESS_UPDATE_MSG,
+                };
             }
             catch (Exception ex)
             {
-                return new EventsAppResult(-4, ex.ToString());
+                return new EventsAppResult
+                {
+                    Status = Const.ERROR_EXCEPTION,
+                    Message = ex.ToString(),
+                };
             }
+
         }
     }
 }
-*/
