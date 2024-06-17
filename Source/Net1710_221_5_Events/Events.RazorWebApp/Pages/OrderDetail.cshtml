@@ -17,17 +17,76 @@
         </button>
     </div>
 </div>
+<form method="post" asp-page-handler="Search">
+    <div class="row mb-3">
+        <div class="col-md-2">
+            <label for="nameEvent">Event Name:</label>
+            <select id="nameEvent" name="nameEvent" class="form-control">
+                <option value="">-- Select --</option>
+                @{
+                    var uniqueeventName = new HashSet<string>();
+                    foreach (var ev in Model.Events)
+                    {
+                        if (!string.IsNullOrEmpty(ev.Name))
+                        {
+                            uniqueeventName.Add(ev.Name);
+                        }
+                    }
+
+                    foreach (var eventName in uniqueeventName)
+                    {
+                        <option value="@eventName">@eventName</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label for="paymentMethod">Payment Method:</label>
+            <select id="paymentMethod" name="paymentMethod" class="form-control">
+                <option value="">-- Select --</option>
+                @{
+                    var uniquePaymentMethods = new HashSet<string>();
+                    foreach (var order in Model.Orders)
+                    {
+                        if (!string.IsNullOrEmpty(order.PaymentMethod))
+                        {
+                            uniquePaymentMethods.Add(order.PaymentMethod);
+                        }
+                    }
+
+                    foreach (var paymentMethod in uniquePaymentMethods)
+                    {
+                        <option value="@paymentMethod">@paymentMethod</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label for="price">Price:</label>
+            <input type="number" id="price" name="price" class="form-control" />
+        </div>
+        <div class="col-md-2">
+            <label for="startDate">Event Start Date:</label>
+            <input type="date" id="startDate" name="startDate" class="form-control" />
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary mt-4">Search</button>
+        </div>
+    </div>
+</form>
+
 
 <div class="row">
     <div class="col-md-12">
         <table class="table table-striped table-bordered table-hover">
             <thead>
                 <tr class="card-header">
-                    @* <th class="card-title text-center">Order Detail ID</th> *@
-                    <th class="card-title text-center">Quantity</th>
-                    <th class="card-title text-center">Price</th>
                     <th class="card-title text-center">Event Name</th>
                     <th class="card-title text-center">Event Location</th>
+                    <th class="card-title text-center">Payment Method</th>
+                    <th class="card-title text-center">Operator Name</th>
+                    <th class="card-title text-center">Quantity</th>
+                    <th class="card-title text-center">Price</th>
                     <th class="card-title text-center">Event Start Date</th>
                     <th class="card-title text-center">Event End Date</th>
                     <th class="card-title text-center">Order Code</th>
@@ -41,11 +100,12 @@
                     foreach (var orderDetail in orderDetails)
                     {
                         <tr>
-                            @*  <td class="text-center">@orderDetail.OrderDetailId</td> *@
-                            <td class="text-center">@orderDetail.Quantity</td>
-                            <td class="text-center">@orderDetail.Price</td>
                             <td class="text-center">@orderDetail.Event?.Name</td>
                             <td class="text-center">@orderDetail.Event?.Location</td>
+                            <td class="text-center">@orderDetail.Order?.PaymentMethod</td>
+                            <td class="text-center">@orderDetail.Event?.OperatorName</td>
+                            <td class="text-center">@orderDetail.Quantity</td>
+                            <td class="text-center">@orderDetail.Price</td>
                             <td class="text-center">@orderDetail.Event?.StartDate</td>
                             <td class="text-center">@orderDetail.Event?.EndDate</td>
                             <td class="text-center">@orderDetail.Order?.Code</td>
@@ -111,6 +171,7 @@
                                 <div class="col-md-6">
                                     <label for="editEvent">Events</label>
                                     <select asp-for="OrderDetail.EventId" id="editEvent" class="form-control">
+                                        <option value="">-- Select --</option>
                                         @foreach (var item in Model.Events)
                                         {
                                             <option value="@item.EventId">@item.Name</option>
@@ -120,17 +181,27 @@
                                 <div class="col-md-6">
                                     <label for="editEvent">Orders Code</label>
                                     <select asp-for="OrderDetail.OrderId" id="editEvent" class="form-control">
+                                        <option value="">-- Select --</option>
                                         @foreach (var item in Model.Orders)
                                         {
                                             <option value="@item.OrderId">@item.Code</option>
                                         }
                                     </select>
                                 </div>
+                                <div class="col-md-6">
+                                    <label for="editEvent">Location Name</label>
+                                    <select asp-for="OrderDetail.EventId" id="editEvent" class="form-control">
+                                        @foreach (var item in Model.Events)
+                                        {
+                                            <option value="@item.Location">@item.Location</option>
+                                        }
+                                    </select>
+                                </div>
                             </div>
                         </div>
-                       @*  <div class="col-md-12">
-                            <label>@message</label>
-                        </div> *@
+                        @*  <div class="col-md-12">
+                    <label>@message</label>
+                    </div> *@
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -233,7 +304,7 @@
                                 </div>
                             </div>
                         </div>
-                     @*     <div class="col-md-12">
+                        @*     <div class="col-md-12">
                         <label>@Model.Message</label>
                         </div> *@
                     </div>
@@ -281,14 +352,14 @@
             $('#oPD').val(date);
             $('#oPM').val(method);
         }
-            // Update the form action with the correct OrderDetailId
+        // Update the form action with the correct OrderDetailId
 
-            //Confirm delete
-            $(document).ready(function () {
-                var message = '@message';
-                if (message) {
-                    alert(message);
-                }
-            });      
+        //Confirm delete
+        $(document).ready(function () {
+            var message = '@message';
+            if (message) {
+                alert(message);
+            }
+        });
     </script>
 }

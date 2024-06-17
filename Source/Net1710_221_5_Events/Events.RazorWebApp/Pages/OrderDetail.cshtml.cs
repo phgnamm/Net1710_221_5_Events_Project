@@ -1,4 +1,4 @@
-using Events.Business;
+﻿using Events.Business;
 using Events.Business.Business;
 using Events.Common;
 using Events.Data.DTOs;
@@ -45,13 +45,12 @@ namespace Events.RazorWebApp.Pages
             DeleteOrderDetail(id);
             return RedirectToPage();
         }
-
         private List<OrderDetail> GetOrderDetails()
         {
             var orderDetailResult = _orderDetailBusiness.GetAllOrderDetailsAsync().Result;
-                return (List<OrderDetail>)orderDetailResult.Data;
-            
-           
+            return (List<OrderDetail>)orderDetailResult.Data;
+
+
         }
 
         private void SaveOrderDetail()
@@ -95,7 +94,6 @@ namespace Events.RazorWebApp.Pages
             }
         }
 
-        //getevent
         private List<Event> GetEvents()
         {
             var eventResult = _eventBusiness.GetAllEvents();
@@ -118,5 +116,42 @@ namespace Events.RazorWebApp.Pages
             }
             return new List<Order>();
         }
+        public IActionResult OnPostSearch(string paymentMethod, decimal? price, DateTime? startDate, string nameEvent)
+        {
+            OrderDetails = GetFilteredOrderDetails(paymentMethod, price, startDate, nameEvent);
+            Events = GetEvents();
+            Orders = GetOrders();
+            return Page();
+        }
+
+        private List<OrderDetail> GetFilteredOrderDetails(string paymentMethod, decimal? price, DateTime? startDate, string nameEvent)
+        {
+            var orderDetails = _orderDetailBusiness.GetAllOrderDetailsAsync().Result.Data as List<OrderDetail>;
+
+            if (!string.IsNullOrEmpty(paymentMethod))
+            {
+                orderDetails = orderDetails.Where(od => od.Order.PaymentMethod == paymentMethod).ToList();
+            }
+            if (!string.IsNullOrEmpty(nameEvent))
+            {
+                orderDetails = orderDetails.Where(od => od.Event.Name == nameEvent).ToList();
+            }
+            if (price != null)
+            {
+                orderDetails = orderDetails.Where(od => od.Price == price).ToList();
+            }
+            if (startDate != null)
+            {
+                orderDetails = orderDetails.Where(od => od.Event.StartDate.Date == startDate.Value.Date).ToList();
+            }
+
+            return orderDetails;
+        }
+
+
+
     }
+
+
 }
+
