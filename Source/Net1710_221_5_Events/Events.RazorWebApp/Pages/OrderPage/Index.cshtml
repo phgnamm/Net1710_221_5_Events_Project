@@ -7,6 +7,27 @@
 
 <h1>Index</h1>
 
+<form method="get" class="search-form">
+    <div class="form-group search-row">
+        <label for="SearchField">Search by:</label>
+        <select id="SearchField" name="SearchField" class="form-control search-field" asp-for="SearchField">
+            <option value="Code">Code</option>
+            <option value="Description">Description</option>
+            <option value="PaymentStatus">Payment Status</option>
+            <option value="PaymentMethod">Payment Method</option>
+        </select>
+        <label for="SearchTerm" class="search-term-label">Search Term:</label>
+        <input type="text" id="SearchTerm" name="SearchTerm" class="form-control search-term" asp-for="SearchTerm" />
+    </div>
+    <div class="form-group search-row">
+        <label for="StartDate">Payment Date From:</label>
+        <input type="date" id="StartDate" name="StartDate" class="form-control" asp-for="StartDate" />
+        <label for="EndDate" class="end-date-label">Payment Date To:</label>
+        <input type="date" id="EndDate" name="EndDate" class="form-control" asp-for="EndDate" />
+    </div>
+    <button type="submit" class="btn btn-primary">Search</button>
+</form>
+
 <p>
     <a asp-page="Create">Create New</a>
 </p>
@@ -41,38 +62,139 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.Order) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Code)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TicketQuantity)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TotalAmount)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PaymentStatus)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PaymentDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PaymentMethod)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>
-            <td>
-                <a asp-page="./Edit" asp-route-id="@item.OrderId">Edit</a> |
-                <a asp-page="./Details" asp-route-id="@item.OrderId">Details</a> |
-                <a asp-page="./Delete" asp-route-id="@item.OrderId">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model.Order)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Code)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TicketQuantity)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TotalAmount)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PaymentStatus)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PaymentDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PaymentMethod)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Status)
+                </td>
+                <td>
+                    <a asp-page="./Edit" asp-route-id="@item.OrderId">Edit</a> |
+                    <a asp-page="./Details" asp-route-id="@item.OrderId">Details</a> |
+                    <a asp-page="./Delete" asp-route-id="@item.OrderId">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+<div class="pagination">
+    <ul class="pagination-list">
+        <li>
+            @if (Model.HasPreviousPage)
+            {
+                <a asp-page="./Index" asp-route-pageIndex="@(Model.PageIndex - 1)" class="pagination-button">Previous</a>
+            }
+        </li>
+        <li class="pagination-numbers">
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <a asp-page="./Index" asp-route-pageIndex="@i" class="@(i == Model.PageIndex ? "active" : "")">@i</a>
+            }
+        </li>
+        <li>
+            @if (Model.HasNextPage)
+            {
+                <a asp-page="./Index" asp-route-pageIndex="@(Model.PageIndex + 1)" class="pagination-button">Next</a>
+            }
+        </li>
+    </ul>
+</div>
+
+@* style button and search bar *@
+<style>
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
+    }
+
+    .pagination-list {
+        list-style: none;
+        display: flex;
+        padding: 0;
+        gap: 10px;
+    }
+
+        .pagination-list li {
+            display: inline;
+        }
+
+    .pagination-button {
+        background-color: #007bff;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 5px;
+        text-decoration: none;
+    }
+
+        .pagination-button:hover {
+            background-color: #0056b3;
+        }
+
+    .pagination-numbers a {
+        padding: 5px 10px;
+        text-decoration: none;
+        color: black;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+    }
+
+    .pagination-numbers .active {
+        background-color: #007bff;
+        color: white;
+        border-color: #007bff;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .search-form {
+        margin-bottom: 20px;
+    }
+
+    .search-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .search-field {
+        width: 150px;
+    }
+
+    .search-term {
+        flex-grow: 1;
+    }
+
+    .search-term-label {
+        margin-left: auto;
+    }
+
+    .end-date-label {
+        margin-left: auto;
+    }
+</style>
