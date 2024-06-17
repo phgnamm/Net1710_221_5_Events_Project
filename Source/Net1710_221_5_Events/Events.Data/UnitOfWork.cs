@@ -15,6 +15,7 @@ namespace Events.Data
         private OrderRepository _orderRepository;
         private OrderDetailRepository _orderDetailRepository;
         private CustomerRepository _customerRepository;
+        private TicketRepository _ticketRepository;
 
         //public UnitOfWork(Net17102215EventsContext unitOfWorkContext)
         //{
@@ -28,6 +29,7 @@ namespace Events.Data
         public OrderRepository OrderRepository => _orderRepository ??= new OrderRepository(_unitOfWorkContext);
         public OrderDetailRepository OrderDetailRepository => _orderDetailRepository ??= new OrderDetailRepository(_unitOfWorkContext);
         public CustomerRepository CustomerRepository => _customerRepository ??= new CustomerRepository(_unitOfWorkContext);
+        public TicketRepository TicketRepository => _ticketRepository ??= new TicketRepository(_unitOfWorkContext);
 
         ////TO-DO CODE HERE/////////////////
 
