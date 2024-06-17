@@ -1,0 +1,96 @@
+﻿@page
+@model Events.RazorWebApp.Pages.TicketPage.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Ticket[0].Code)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Ticket[0].Qrcode)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Ticket[0].ParticipantName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Ticket[0].ParticipantMail)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Ticket[0].ParticipantPhone)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Ticket[0].SpecialNote)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Ticket[0].TicketType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Ticket[0].CreatedDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Ticket[0].Status)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Ticket[0].IsDelete)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Ticket[0].OrderDetail.Event.Name)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Ticket) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Code)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Qrcode)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ParticipantName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ParticipantMail)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ParticipantPhone)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SpecialNote)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TicketType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Status)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsDelete)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OrderDetail.Event.Name)
+            </td>
+            <td>
+                <a asp-page="./Edit" asp-route-id="@item.TicketId">Edit</a> |
+                <a asp-page="./Details" asp-route-id="@item.TicketId">Details</a> |
+                <a asp-page="./Delete" asp-route-id="@item.TicketId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
