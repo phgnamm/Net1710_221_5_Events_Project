@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Events.Data.Models;
 using Events.Business;
 using Events.Common;
+using Events.RazorWebApp.Hubs;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Events.RazorWebApp.Pages.OrderPage
 {

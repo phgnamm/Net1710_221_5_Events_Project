@@ -3,6 +3,8 @@ using Events.Common;
 using Events.Data;
 using Events.Data.DTOs;
 using Events.Data.Models;
+using Events.RazorWebApp.Hubs;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;

@@ -1,6 +1,7 @@
 using Events.Business;
 using Events.Business.Business;
 using Events.Data;
+using Events.RazorWebApp.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,9 @@ builder.Services.AddRazorPages();
 builder.Services.AddScoped<UnitOfWork>();
 builder.Services.AddScoped<IOrderBusiness, OrderBusiness>();
 //builder.Services.AddScoped<IEventBusiness, EventBusiness>();
+
+// Add SignalR
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -29,5 +33,8 @@ app.UseRouting();
 app.UseAuthorization();
 
 app.MapRazorPages();
+
+// Map SignalR Hubs
+app.MapHub<OrderHub>("/orderHub");
 
 app.Run();
