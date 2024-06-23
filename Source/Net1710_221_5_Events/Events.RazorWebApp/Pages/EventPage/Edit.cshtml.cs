@@ -49,6 +49,24 @@ namespace Events.RazorWebApp.Pages.EventPage
                 return Page();
             }
 
+            if (Event.StartDate.Date >= Event.EndDate.Date)
+            {
+                ModelState.AddModelError(string.Empty, "Start date must be before End date.");
+                return Page();
+            }
+
+            if (Event.OpenTicket.Date >= Event.CloseTicket.Date)
+            {
+                ModelState.AddModelError(string.Empty, "Open ticket date must be before Close ticket date.");
+                return Page();
+            }
+
+            if (Event.OpenTicket.Date >= Event.StartDate.Date)
+            {
+                ModelState.AddModelError(string.Empty, "Open ticket date must be before Start date.");
+                return Page();
+            }
+
             //_context.Attach(Event).State = EntityState.Modified;
 
             try
