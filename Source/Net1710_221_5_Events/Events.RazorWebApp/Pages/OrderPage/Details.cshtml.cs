@@ -17,6 +17,7 @@ namespace Events.RazorWebApp.Pages.OrderPage
             _orderBusiness = orderBusiness;
         }
 
+        // binding obj
         public Order Order { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int id)

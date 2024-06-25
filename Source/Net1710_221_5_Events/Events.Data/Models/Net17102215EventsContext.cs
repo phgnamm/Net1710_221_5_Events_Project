@@ -108,7 +108,12 @@ public partial class Net17102215EventsContext : DbContext
             entity.ToTable("Ticket");
 
             entity.Property(e => e.Code).HasMaxLength(50);
+            entity.Property(e => e.IsDelete).HasDefaultValue(false);
+            entity.Property(e => e.ParticipantMail).HasMaxLength(100);
+            entity.Property(e => e.ParticipantName).HasMaxLength(50);
+            entity.Property(e => e.ParticipantPhone).HasMaxLength(15);
             entity.Property(e => e.Qrcode).HasColumnName("QRCode");
+            entity.Property(e => e.TicketType).HasMaxLength(50);
 
             entity.HasOne(d => d.OrderDetail).WithMany(p => p.Tickets).HasForeignKey(d => d.OrderDetailId);
         });

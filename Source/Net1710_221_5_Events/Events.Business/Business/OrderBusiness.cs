@@ -2,6 +2,8 @@
 using Events.Common;
 using Events.Data;
 using Events.Data.Models;
+using Events.RazorWebApp.Hubs;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -23,9 +25,15 @@ namespace Events.Business
     public class OrderBusiness : IOrderBusiness
     {
         private readonly UnitOfWork _unitOfWork;
-
+        private readonly IHubContext<OrderHub> _hubContext;
         public OrderBusiness()
         {
+            _unitOfWork = new UnitOfWork();
+        }
+
+        public OrderBusiness(IHubContext<OrderHub> hubContext)
+        {
+            _hubContext = hubContext;
             _unitOfWork =  new UnitOfWork();
         }
 
@@ -34,6 +42,7 @@ namespace Events.Business
             try
             {
                 await _unitOfWork.OrderRepository.CreateAsync(newOrder);
+                await _hubContext.Clients.All.SendAsync("OrderUpdated");
                 return new EventsAppResult
                 {
                     Status = Const.SUCCESS_CREATE_CODE,
@@ -49,19 +58,19 @@ namespace Events.Business
                     Message = ex.ToString(),
                 };
             }
-
         }
 
         public async Task<IEventsAppResult> DeleteOrderById(int id)
         {
             try
             {
-                var currency = await _unitOfWork.OrderRepository.GetByIdAsync(id);
-                if (currency != null)
+                var order = await _unitOfWork.OrderRepository.GetByIdAsync(id);
+                if (order != null)
                 {
-                    var result = await _unitOfWork.OrderRepository.RemoveAsync(currency);
+                    var result = await _unitOfWork.OrderRepository.RemoveAsync(order);
                     if (result)
                     {
+                        await _hubContext.Clients.All.SendAsync("OrderUpdated");
                         return new EventsAppResult(Const.SUCCESS_DELETE_CODE, Const.SUCCESS_DELETE_MSG);
                     }
                     else
@@ -79,6 +88,7 @@ namespace Events.Business
                 return new EventsAppResult(-4, ex.ToString());
             }
         }
+
 
         public async Task<IEventsAppResult> GetAllOrders()
         {
@@ -167,6 +177,7 @@ namespace Events.Business
 
                 // save order
                 await _unitOfWork.OrderRepository.UpdateAsync(existOrder);
+                await _hubContext.Clients.All.SendAsync("OrderUpdated");
 
                 return new EventsAppResult
                 {
@@ -182,7 +193,6 @@ namespace Events.Business
                     Message = ex.ToString(),
                 };
             }
-
         }
     }
 }
