@@ -1,0 +1,95 @@
+﻿@page
+@model Events.RazorWebApp.Pages.OrderDetailPage.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-page="./Create">Create New</a>
+</p>
+
+@if (Model.OrderDetail != null && Model.OrderDetail.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>STT</th>
+                <th>
+                    @Html.DisplayNameFor(model => model.OrderDetail[0].Event.Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.OrderDetail[0].Price)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.OrderDetail[0].Quantity)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.OrderDetail[0].Event.Location)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.OrderDetail[0].Event.StartDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.OrderDetail[0].Event.EndDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.OrderDetail[0].Order.Code)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.OrderDetail[0].Order.PaymentStatus)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int stt = 1;
+            }
+            @foreach (var item in Model.OrderDetail)
+            {
+                <tr>
+                    <td>
+                        @stt
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Event.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Price)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Quantity)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Event.Location)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Event.StartDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Event.EndDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Order.Code)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Order.PaymentStatus)
+                    </td>
+                    <td>
+                        <a asp-page="./Edit" asp-route-id="@item.OrderDetailId">Edit</a> |
+                        <a asp-page="./Details" asp-route-id="@item.OrderDetailId">Details</a> |
+                        <a asp-page="./Delete" asp-route-id="@item.OrderDetailId">Delete</a>
+                    </td>
+                </tr>
+                stt++;
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No order details found.</p>
+}

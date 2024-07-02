@@ -1,11 +1,13 @@
-using Events.Business;
+﻿using Events.Business;
 using Events.Business.Business;
 using Events.Common;
 using Events.Data.DTOs;
 using Events.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Events.RazorWebApp.Pages
 {
@@ -22,9 +24,14 @@ namespace Events.RazorWebApp.Pages
         public List<Event> Events { get; set; } = new List<Event>();
         public List<Order> Orders { get; set; } = new List<Order>();
 
-        public void OnGet()
+        public int PageIndex { get; set; } = 1;
+        public int TotalPages { get; set; }
+        public int PageSize { get; set; } = 4;
+
+        public void OnGet(int pageIndex = 1)
         {
-            OrderDetails = GetOrderDetails();
+            PageIndex = pageIndex;
+            OrderDetails = GetPaginatedOrderDetails(PageIndex, PageSize);
             Events = GetEvents();
             Orders = GetOrders();
         }
@@ -32,7 +39,7 @@ namespace Events.RazorWebApp.Pages
         public IActionResult OnPost()
         {
             SaveOrderDetail();
-            return RedirectToPage();
+            return RedirectToPage("/OrderDetail");
         }
         public IActionResult OnPostEdit()
         {
@@ -45,13 +52,21 @@ namespace Events.RazorWebApp.Pages
             DeleteOrderDetail(id);
             return RedirectToPage();
         }
-
         private List<OrderDetail> GetOrderDetails()
         {
             var orderDetailResult = _orderDetailBusiness.GetAllOrderDetailsAsync().Result;
-                return (List<OrderDetail>)orderDetailResult.Data;
-            
-           
+            return (List<OrderDetail>)orderDetailResult.Data;
+        }
+
+        private List<OrderDetail> GetPaginatedOrderDetails(int pageIndex, int pageSize)
+        {
+            var orderDetails = GetOrderDetails();
+            TotalPages = (int)Math.Ceiling(orderDetails.Count / (double)pageSize);
+
+            return orderDetails
+                    .Skip((pageIndex - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToList();
         }
 
         private void SaveOrderDetail()
@@ -61,6 +76,8 @@ namespace Events.RazorWebApp.Pages
             if (orderDetailResult != null)
             {
                 this.Message = orderDetailResult.Message;
+                OrderDetails = GetOrderDetails();
+                OrderDetails.Insert(0, this.OrderDetail);
             }
             else
             {
@@ -95,7 +112,6 @@ namespace Events.RazorWebApp.Pages
             }
         }
 
-        //getevent
         private List<Event> GetEvents()
         {
             var eventResult = _eventBusiness.GetAllEvents();
@@ -117,6 +133,41 @@ namespace Events.RazorWebApp.Pages
                 return currencies;
             }
             return new List<Order>();
+        }
+        public IActionResult OnPostSearch(string paymentMethod, decimal? price, DateTime? startDate, string nameEvent, int pageIndex = 1)
+        {
+            PageIndex = pageIndex;
+            OrderDetails = GetFilteredOrderDetails(paymentMethod, price, startDate, nameEvent);
+            TotalPages = (int)Math.Ceiling(OrderDetails.Count / (double)PageSize);
+            OrderDetails = OrderDetails.Skip((PageIndex - 1) * PageSize).Take(PageSize).ToList();
+
+            Events = GetEvents();
+            Orders = GetOrders();
+            return Page();
+        }
+
+        private List<OrderDetail> GetFilteredOrderDetails(string paymentMethod, decimal? price, DateTime? startDate, string nameEvent)
+        {
+            var orderDetails = _orderDetailBusiness.GetAllOrderDetailsAsync().Result.Data as List<OrderDetail>;
+
+            if (!string.IsNullOrEmpty(paymentMethod))
+            {
+                orderDetails = orderDetails.Where(od => od.Order.PaymentMethod == paymentMethod).ToList();
+            }
+            if (!string.IsNullOrEmpty(nameEvent))
+            {
+                orderDetails = orderDetails.Where(od => od.Event.Name == nameEvent).ToList();
+            }
+            if (price != null)
+            {
+                orderDetails = orderDetails.Where(od => od.Price == price).ToList();
+            }
+            if (startDate != null)
+            {
+                orderDetails = orderDetails.Where(od => od.Event.StartDate.Date == startDate.Value.Date).ToList();
+            }
+
+            return orderDetails;
         }
     }
 }

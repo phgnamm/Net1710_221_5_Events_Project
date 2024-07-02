@@ -18,16 +18,75 @@
     </div>
 </div>
 
+<form method="post" asp-page-handler="Search">
+    <div class="row mb-3">
+        <div class="col-md-2">
+            <label for="nameEvent">Event Name:</label>
+            <select id="nameEvent" name="nameEvent" class="form-control">
+                <option value="">-- Select --</option>
+                @{
+                    var uniqueeventName = new HashSet<string>();
+                    foreach (var ev in Model.Events)
+                    {
+                        if (!string.IsNullOrEmpty(ev.Name))
+                        {
+                            uniqueeventName.Add(ev.Name);
+                        }
+                    }
+
+                    foreach (var eventName in uniqueeventName)
+                    {
+                        <option value="@eventName">@eventName</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label for="paymentMethod">Payment Method:</label>
+            <select id="paymentMethod" name="paymentMethod" class="form-control">
+                <option value="">-- Select --</option>
+                @{
+                    var uniquePaymentMethods = new HashSet<string>();
+                    foreach (var order in Model.Orders)
+                    {
+                        if (!string.IsNullOrEmpty(order.PaymentMethod))
+                        {
+                            uniquePaymentMethods.Add(order.PaymentMethod);
+                        }
+                    }
+
+                    foreach (var paymentMethod in uniquePaymentMethods)
+                    {
+                        <option value="@paymentMethod">@paymentMethod</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label for="price">Price:</label>
+            <input type="number" id="price" name="price" class="form-control" />
+        </div>
+        <div class="col-md-2">
+            <label for="startDate">Event Start Date:</label>
+            <input type="date" id="startDate" name="startDate" class="form-control" />
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary mt-4">Search</button>
+        </div>
+    </div>
+</form>
+
 <div class="row">
     <div class="col-md-12">
         <table class="table table-striped table-bordered table-hover">
             <thead>
                 <tr class="card-header">
-                    @* <th class="card-title text-center">Order Detail ID</th> *@
-                    <th class="card-title text-center">Quantity</th>
-                    <th class="card-title text-center">Price</th>
                     <th class="card-title text-center">Event Name</th>
                     <th class="card-title text-center">Event Location</th>
+                    <th class="card-title text-center">Payment Method</th>
+                    <th class="card-title text-center">Operator Name</th>
+                    <th class="card-title text-center">Quantity</th>
+                    <th class="card-title text-center">Price</th>
                     <th class="card-title text-center">Event Start Date</th>
                     <th class="card-title text-center">Event End Date</th>
                     <th class="card-title text-center">Order Code</th>
@@ -41,18 +100,19 @@
                     foreach (var orderDetail in orderDetails)
                     {
                         <tr>
-                            @*  <td class="text-center">@orderDetail.OrderDetailId</td> *@
-                            <td class="text-center">@orderDetail.Quantity</td>
-                            <td class="text-center">@orderDetail.Price</td>
                             <td class="text-center">@orderDetail.Event?.Name</td>
                             <td class="text-center">@orderDetail.Event?.Location</td>
+                            <td class="text-center">@orderDetail.Order?.PaymentMethod</td>
+                            <td class="text-center">@orderDetail.Event?.OperatorName</td>
+                            <td class="text-center">@orderDetail.Quantity</td>
+                            <td class="text-center">@orderDetail.Price</td>
                             <td class="text-center">@orderDetail.Event?.StartDate</td>
                             <td class="text-center">@orderDetail.Event?.EndDate</td>
                             <td class="text-center">@orderDetail.Order?.Code</td>
                             <td class="text-center">@orderDetail.Order?.PaymentStatus</td>
                             <td class="text-center">
                                 <div class="d-flex justify-content-center">
-                                    <button type="button" class="btn btn-warning me-2" onclick="openEditModal('@orderDetail.OrderDetailId', '@orderDetail.Quantity', '@orderDetail.Price','@orderDetail.OrderId')">
+                                    <button type="button" class="btn btn-warning me-2" onclick="openEditModal('@orderDetail.OrderDetailId', '@orderDetail.Quantity', '@orderDetail.Price', '@orderDetail.OrderId', '@orderDetail.EventId')">
                                         <i class="fas fa-edit"></i> Edit
                                     </button>
                                     <form method="post" asp-page-handler="Delete" asp-route-id="@orderDetail.OrderDetailId" onsubmit="return confirm('Are you sure you want to delete this order?');">
@@ -64,9 +124,7 @@
                                         <i class="fas fa-info-circle"></i> Detail
                                     </button>
                                 </div>
-
                             </td>
-
                         </tr>
                     }
                 }
@@ -81,66 +139,78 @@
     </div>
 </div>
 
+<nav aria-label="Page navigation">
+    <ul class="pagination">
+        <li class="page-item @(Model.PageIndex > 1 ? "" : "disabled")">
+            <a class="page-link" asp-page-handler="Search" asp-route-pageIndex="@(Model.PageIndex - 1)" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+        @for (var i = 1; i <= Model.TotalPages; i++)
+        {
+            <li class="page-item @(i == Model.PageIndex ? "active" : "")">
+                <a class="page-link" asp-page-handler="Search" asp-route-pageIndex="@i">@i</a>
+            </li>
+        }
+        <li class="page-item @(Model.PageIndex < Model.TotalPages ? "" : "disabled")">
+            <a class="page-link" asp-page-handler="Search" asp-route-pageIndex="@(Model.PageIndex + 1)" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+    </ul>
+</nav>
+
+<!-- Add Order Detail Modal -->
 <div class="modal fade" id="orderDetailModal" tabindex="-1" aria-labelledby="orderDetailModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            @using (Html.BeginForm(null, null, FormMethod.Post, new { name = "frm", id = "frm" }))
-            {
+            <form method="post" action="/OrderDetail">
                 @Html.AntiForgeryToken()
                 <div class="modal-header">
                     <h5 class="modal-title" id="orderDetailModalLabel">Order Detail Transaction</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div id="orderDetailModalContent"></div>
                     <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group row">
-                                <div class="col-md-6">
-                                    <label for="quantity">Quantity</label>
-                                    <input asp-for="OrderDetail.Quantity" class="form-control" />
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="price">Price</label>
-                                    <input asp-for="OrderDetail.Price" class="form-control" />
-                                </div>
-                            </div>
+                        <div class="col-md-6">
+                            <label for="quantity">Quantity</label>
+                            <input asp-for="OrderDetail.Quantity" class="form-control" />
                         </div>
-                        <div class="col-md-12">
-                            <div class="form-group row">
-                                <div class="col-md-6">
-                                    <label for="editEvent">Events</label>
-                                    <select asp-for="OrderDetail.EventId" id="editEvent" class="form-control">
-                                        @foreach (var item in Model.Events)
-                                        {
-                                            <option value="@item.EventId">@item.Name</option>
-                                        }
-                                    </select>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="editEvent">Orders Code</label>
-                                    <select asp-for="OrderDetail.OrderId" id="editEvent" class="form-control">
-                                        @foreach (var item in Model.Orders)
-                                        {
-                                            <option value="@item.OrderId">@item.Code</option>
-                                        }
-                                    </select>
-                                </div>
-                            </div>
+                        <div class="col-md-6">
+                            <label for="price">Price</label>
+                            <input asp-for="OrderDetail.Price" class="form-control" />
                         </div>
-                       @*  <div class="col-md-12">
-                            <label>@message</label>
-                        </div> *@
+                        <div class="col-md-6">
+                            <label for="event">Events</label>
+                            <select asp-for="OrderDetail.EventId" id="event" class="form-control">
+                                <option value="">-- Select --</option>
+                                @foreach (var item in Model.Events)
+                                {
+                                    <option value="@item.EventId">@item.Name</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="orderCode">Order Code</label>
+                            <select asp-for="OrderDetail.OrderId" id="orderCode" class="form-control">
+                                <option value="">-- Select --</option>
+                                @foreach (var item in Model.Orders)
+                                {
+                                    <option value="@item.OrderId">@item.Code</option>
+                                }
+                            </select>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button id="btSave" type="submit" class="btn btn-primary">Save</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
-            }
+            </form>
         </div>
     </div>
 </div>
+
 @*-------------------DetailOrder---------------------*@
 <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="orderDetailModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -155,41 +225,33 @@
                 <div class="modal-body">
                     <div id="orderDetailModalContent"></div>
                     <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group row">
-                                <div class="col-md-6">
-                                    <label for="oCode">Code</label>
-                                    <input id="oCode" class="form-control" readonly />
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="oDescription">Description</label>
-                                    <input id="oDescription" class="form-control" readonly />
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="oTicket">Ticket Quantity</label>
-                                    <input id="oTicket" class="form-control" readonly />
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="oTotal">Total Amount</label>
-                                    <input id="oTotal" class="form-control" readonly />
-                                </div>
-                            </div>
+                        <div class="col-md-6">
+                            <label for="oCode">Code</label>
+                            <input id="oCode" class="form-control" readonly />
                         </div>
-                        <div class="col-md-12">
-                            <div class="form-group row">
-                                <div class="col-md-6">
-                                    <label for="oPS">Payment Status</label>
-                                    <input id="oPS" class="form-control" readonly />
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="oPD">Payment Date</label>
-                                    <input id="oPD" class="form-control" readonly />
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="oPM">Payment Method</label>
-                                    <input id="oPM" class="form-control" readonly />
-                                </div>
-                            </div>
+                        <div class="col-md-6">
+                            <label for="oDescription">Description</label>
+                            <input id="oDescription" class="form-control" readonly />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="oTicket">Ticket Quantity</label>
+                            <input id="oTicket" class="form-control" readonly />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="oTotal">Total Amount</label>
+                            <input id="oTotal" class="form-control" readonly />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="oPS">Payment Status</label>
+                            <input id="oPS" class="form-control" readonly />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="oPD">Payment Date</label>
+                            <input id="oPD" class="form-control" readonly />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="oPM">Payment Method</label>
+                            <input id="oPM" class="form-control" readonly />
                         </div>
                     </div>
                 </div>
@@ -212,30 +274,23 @@
                 </div>
                 <div class="modal-body">
                     <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group row">
-                                <div class="col-md-6">
-                                    <label for="editQuantity">Quantity</label>
-                                    <input asp-for="OrderDetail.Quantity" id="editQuantity" class="form-control" />
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="editPrice">Price</label>
-                                    <input asp-for="OrderDetail.Price" id="editPrice" class="form-control" />
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="editEvent">Events</label>
-                                    <select asp-for="OrderDetail.EventId" id="editEvent" class="form-control">
-                                        @foreach (var item in Model.Events)
-                                        {
-                                            <option value="@item.EventId">@item.Name</option>
-                                        }
-                                    </select>
-                                </div>
-                            </div>
+                        <div class="col-md-6">
+                            <label for="editQuantity">Quantity</label>
+                            <input asp-for="OrderDetail.Quantity" id="editQuantity" class="form-control" />
                         </div>
-                     @*     <div class="col-md-12">
-                        <label>@Model.Message</label>
-                        </div> *@
+                        <div class="col-md-6">
+                            <label for="editPrice">Price</label>
+                            <input asp-for="OrderDetail.Price" id="editPrice" class="form-control" />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="editEvent">Events</label>
+                            <select asp-for="OrderDetail.EventId" id="editEvent" class="form-control">
+                                @foreach (var item in Model.Events)
+                                {
+                                    <option value="@item.EventId">@item.Name</option>
+                                }
+                            </select>
+                        </div>
                     </div>
                 </div>
                 <input asp-for="OrderDetail.OrderDetailId" type="hidden" id="idOrderDetail" class="form-control" />
@@ -249,15 +304,13 @@
     </div>
 </div>
 
-
-
 @section scripts
 {
     <script type="text/javascript">
         function add() {
             $('#orderDetailModal').modal('show');
         }
-        function openEditModal(orderDetailId, quantity, price, orderID) {
+        function openEditModal(orderDetailId, quantity, price, orderID, eventID) {
             $('#editOrderDetailModal').modal('show');
 
             // Update modal fields with data from the row
@@ -265,9 +318,7 @@
             $('#editPrice').val(price);
             $('#idOrderDetail').val(orderDetailId);
             $('#idOrder').val(orderID);
-
-            // Update the form action with the correct OrderDetailId
-            $('#editFrm').attr('action', 'OrderDetail/Post');
+            $('#editEvent').val(eventID);
         }
         function openDetailModal(code, descrip, ticket, total, status, date, method) {
             $('#detailModal').modal('show');
@@ -281,14 +332,13 @@
             $('#oPD').val(date);
             $('#oPM').val(method);
         }
-            // Update the form action with the correct OrderDetailId
 
-            //Confirm delete
-            $(document).ready(function () {
-                var message = '@message';
-                if (message) {
-                    alert(message);
-                }
-            });      
+        //Confirm delete
+        $(document).ready(function () {
+            var message = '@message';
+            if (message) {
+                alert(message);
+            }
+        });
     </script>
 }
