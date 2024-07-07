@@ -1,5 +1,6 @@
 ﻿using Events.Business.Business;
 using Events.Data.Models;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,11 +28,12 @@ namespace Events.WpfApp.UI
         {
             InitializeComponent();
             this._customerBusiness ??= new CustomerBusiness();
-            this.LoadGrdEvents();
+            this.LoadGrdCustomers();
         }
 
-        private async void LoadGrdEvents()
+        private async void LoadGrdCustomers()
         {
+            ClearTextFields();
             var result = await _customerBusiness.GetAllCustomers();
 
             if (result.Status > 0 && result.Data != null)
@@ -48,44 +50,72 @@ namespace Events.WpfApp.UI
         {
             try
             {
-                var item = await _customerBusiness.GetCustomer(Int32.Parse(txtCustomerId.Text));
+                int customerId = 0;
+                if (!txtId.Text.IsNullOrEmpty())
+                {
+                    customerId = int.Parse(txtId.Text);
+                }
+                var item = await _customerBusiness.GetCustomer(customerId);
 
                 if (item.Data == null)
                 {
-                    var customer = new Customer()
+                    DateTime dateOfBirth;
+                    if (DateTime.TryParse(txtDateOfBirth.Text, out dateOfBirth))
                     {
-                        CustomerId = Int32.Parse(txtCustomerId.Text),
-                        FullName = txtName.Text,
-                        Email = txtEmail.Text,
-                    };
-
-                    var result = await _customerBusiness.Update(customer);
-                    MessageBox.Show(result.Message, "Save");
+                        var customer = new Customer()
+                        {
+                            FullName = txtName.Text,
+                            Email = txtEmail.Text,
+                            PhoneNumber = txtPhone.Text,
+                            Gender = txtGender.Text,
+                            DateOfBirth = dateOfBirth,
+                            Address = txtAddress.Text,
+                            City = txtCity.Text,
+                            Country = txtCountry.Text,
+                            CreateDate = DateTime.Now
+                        };
+                        var result = await _customerBusiness.Create(customer);
+                        MessageBox.Show(result.Message, "Save");
+                    }
                 }
                 else
                 {
                     var customer = item.Data as Customer;
-                    //currency.CurrencyCode = txtCurrencyCode.Text;
+
                     customer.FullName = txtName.Text;
                     customer.Email = txtEmail.Text;
+                    customer.PhoneNumber = txtPhone.Text;
+                    customer.Gender = txtGender.Text;
+                    DateTime dateOfBirth;
+                    if (DateTime.TryParse(txtDateOfBirth.Text, out dateOfBirth))
+                    {
+                        customer.DateOfBirth = dateOfBirth;
+                    }
+                    else
+                    {
+                        customer.DateOfBirth = customer.DateOfBirth;
+                    }
+                    customer.Address = txtAddress.Text;
+                    customer.City = txtCity.Text;
+                    customer.Country = txtCountry.Text;
+                    customer.CreateDate = customer.CreateDate;
 
                     var result = await _customerBusiness.Update(customer);
-                    MessageBox.Show(result.Message, "Update");
+                    MessageBox.Show(result.Message, "Update", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
-
-                txtCustomerId.Text = string.Empty;
-                txtEmail.Text = string.Empty;
-                txtName.Text = string.Empty;
-                this.LoadGrdEvents();
+                this.LoadGrdCustomers();
+                ButtonAdd.IsEnabled = true;
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.ToString(), "Error");
+                this.LoadGrdCustomers();
             }
         }
 
-        private async void grdCurrency_MouseDouble_Click(object sender, RoutedEventArgs e)
+        private async void grdCustomer_MouseDouble_Click(object sender, RoutedEventArgs e)
         {
+            ButtonSave.IsEnabled = true;
             DataGrid grd = sender as DataGrid;
             if (grd != null && grd.SelectedItems != null && grd.SelectedItems.Count == 1)
             {
@@ -95,14 +125,20 @@ namespace Events.WpfApp.UI
                     var item = row.Item as Customer;
                     if (item != null)
                     {
-                        var currencyResult = await _customerBusiness.GetCustomer(item.CustomerId);
+                        var customerResult = await _customerBusiness.GetCustomer(item.CustomerId);
 
-                        if (currencyResult.Status > 0 && currencyResult.Data != null)
+                        if (customerResult.Status > 0 && customerResult.Data != null)
                         {
-                            item = currencyResult.Data as Customer;
-                            txtCustomerId.Text = item.CustomerId.ToString();
+                            item = customerResult.Data as Customer;
+                            txtId.Text = item.CustomerId.ToString();
+                            txtPhone.Text = item.PhoneNumber;
                             txtName.Text = item.FullName;
                             txtEmail.Text = item.Email;
+                            txtGender.Text = item.Gender;
+                            txtDateOfBirth.Text = item.DateOfBirth.ToString();
+                            txtAddress.Text = item.Address;
+                            txtCity.Text = item.City;
+                            txtCountry.Text = item.Country;
                         }
                     }
                 }
@@ -111,10 +147,10 @@ namespace Events.WpfApp.UI
 
         private void ButtonCancel_Click(object sender, RoutedEventArgs e)
         {
-
+            Close();
         }
 
-        private async void grdCurrency_ButtonDelete_Click(object sender, RoutedEventArgs e)
+        private async void grdCustomer_ButtonDelete_Click(object sender, RoutedEventArgs e)
         {
             Button btn = (Button)sender;
 
@@ -126,10 +162,28 @@ namespace Events.WpfApp.UI
                 {
                     var result = await _customerBusiness.Delete(Int32.Parse(currencyCode));
                     MessageBox.Show($"{result.Message}", "Delete");
-                    this.LoadGrdEvents();
+                    this.LoadGrdCustomers();
                 }
             }
         }
+
+        private void ClearTextFields()
+        {
+            txtId.Text = string.Empty;
+            txtCity.Text = string.Empty;
+            txtName.Text = string.Empty;
+            txtAddress.Text = string.Empty;
+            txtDateOfBirth.Text = string.Empty;
+            txtEmail.Text = string.Empty;
+            txtPhone.Text = string.Empty;
+            txtGender.Text = string.Empty;
+            txtCountry.Text = string.Empty;
+        }
+        private void ButtonAdd_Click(object sender, RoutedEventArgs e)
+        {
+            ClearTextFields();
+            ButtonAdd.IsEnabled = false;
+            ButtonSave.IsEnabled = true;
+        }
     }
 }
-

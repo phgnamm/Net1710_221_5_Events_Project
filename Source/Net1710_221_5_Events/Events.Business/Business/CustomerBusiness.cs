@@ -61,14 +61,35 @@ namespace Events.Business.Business
         {
             try
             {
-                await _unitOfWork.CustomerRepository.CreateAsync(customer);
+                var emailExist = await _unitOfWork.CustomerRepository.GetCustomerByEmail(customer.Email);
+                var phoneExist = await _unitOfWork.CustomerRepository.GetCustomerByPhoneNumber(customer.PhoneNumber);
 
-                return new EventsAppResult
+                if (emailExist != null)
                 {
-                    Status = Const.SUCCESS_CREATE_CODE,
-                    Message = Const.SUCCESS_CREATE_MSG,
-                    Data = customer
-                };
+                    return new EventsAppResult
+                    {
+                        Status = Const.FAIL_CREATE_CODE,
+                        Message = Const.FAIL_CREATE_MSG,
+                    };
+                } else if (phoneExist != null)
+                {
+                    return new EventsAppResult
+                    {
+                        Status = Const.FAIL_CREATE_CODE,
+                        Message = Const.FAIL_CREATE_MSG,
+                    };
+                }
+                else
+                {
+                    await _unitOfWork.CustomerRepository.CreateAsync(customer);
+
+                    return new EventsAppResult
+                    {
+                        Status = Const.SUCCESS_CREATE_CODE,
+                        Message = Const.SUCCESS_CREATE_MSG,
+                        Data = customer
+                    };
+                }
             }
             catch (Exception ex)
             {
@@ -86,7 +107,6 @@ namespace Events.Business.Business
 
             try
             {
-
                 var customer = await _unitOfWork.CustomerRepository.GetByIdAsync(customerId);
 
                 if (customer == null)
@@ -159,11 +179,42 @@ namespace Events.Business.Business
                     };
                 }
 
+                if(existCustomer.Email != customer.Email)
+                {
+                    var emailExist = await _unitOfWork.CustomerRepository.GetCustomerByEmail(customer.Email);
+
+                    if(emailExist != null && emailExist.CustomerId != customer.CustomerId)
+                    {
+                        return new EventsAppResult
+                        {
+                            Status = Const.FAIL_UPDATE_CODE,
+                            Message = Const.FAIL_UPDATE_MSG
+                        };
+                    }
+                }
+
+                if (existCustomer.PhoneNumber != customer.PhoneNumber)
+                {
+                    var phoneExist = await _unitOfWork.CustomerRepository.GetCustomerByPhoneNumber(customer.PhoneNumber);
+
+                    if (phoneExist != null && phoneExist.CustomerId != customer.CustomerId)
+                    {
+                        return new EventsAppResult
+                        {
+                            Status = Const.FAIL_UPDATE_CODE,
+                            Message = Const.FAIL_UPDATE_MSG
+                        };
+                    }
+                }
+
                 existCustomer.FullName = customer.FullName;
                 existCustomer.Email = customer.Email;
                 existCustomer.PhoneNumber = customer.PhoneNumber;
                 existCustomer.Gender = customer.Gender;
                 existCustomer.DateOfBirth = customer.DateOfBirth;
+                existCustomer.Address = customer.Address;
+                existCustomer.City = customer.City;
+                existCustomer.Country = customer.Country;
 
                 await _unitOfWork.CustomerRepository.UpdateAsync(existCustomer);
 
@@ -181,7 +232,6 @@ namespace Events.Business.Business
                     Message = ex.ToString(),
                 };
             }
-
         }
     }
 }

@@ -73,7 +73,7 @@ namespace Events.WpfApp.UI
                         TicketPrice = int.Parse(txtTicketPrice.Text),
                         Quantity = int.Parse(txtQuantity.Text),
                         OperatorName = txtOperator.Text,
-                        IsDelete = false
+             //           IsDelete = false
                     };
 
                     var result = await _eventBusiness.CreateNewEvent(eventItem);
@@ -94,7 +94,7 @@ namespace Events.WpfApp.UI
                     eventItem.TicketPrice = int.Parse(txtTicketPrice.Text);
                     eventItem.Quantity = int.Parse(txtQuantity.Text);
                     eventItem.OperatorName = txtOperator.Text;
-                    eventItem.IsDelete = false;
+            //        eventItem.IsDelete = false;
 
                     var result = await _eventBusiness.UpdateEventById(eventItem);
                     MessageBox.Show(result.Message, "Update", MessageBoxButton.OK, MessageBoxImage.Information);

@@ -13,9 +13,17 @@ public partial class Customer
 
     public string PhoneNumber { get; set; } = null!;
 
-    public bool Gender { get; set; }
+    public string Gender { get; set; } = null!;
 
     public DateTime DateOfBirth { get; set; }
+
+    public string Address { get; set; } = null!;
+
+    public string City { get; set; } = null!;
+
+    public string Country { get; set; } = null!;
+
+    public DateTime CreateDate { get; set; }
 
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 }
