@@ -63,8 +63,12 @@ public partial class Net17102215EventsContext : DbContext
         {
             entity.ToTable("Customer");
 
+            entity.Property(e => e.Address).HasMaxLength(250);
+            entity.Property(e => e.City).HasMaxLength(250);
+            entity.Property(e => e.Country).HasMaxLength(250);
             entity.Property(e => e.Email).HasMaxLength(250);
             entity.Property(e => e.FullName).HasMaxLength(150);
+            entity.Property(e => e.Gender).HasMaxLength(15);
             entity.Property(e => e.PhoneNumber)
                 .HasMaxLength(10)
                 .IsUnicode(false);
