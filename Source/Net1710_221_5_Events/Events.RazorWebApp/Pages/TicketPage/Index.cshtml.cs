@@ -55,6 +55,7 @@ namespace Events.RazorWebApp.Pages.TicketPage
                         "PartName" => tickets.Where(o => o.ParticipantName.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase)).ToList(),
                         "PartMail" => tickets.Where(o => o.ParticipantMail.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase)).ToList(),
                         "PartPhone" => tickets.Where(o => o.ParticipantPhone.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase)).ToList(),
+                        "EventName" => tickets.Where(o => o.OrderDetail.Event.Name.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase)).ToList(),
                         _ => tickets
                     };
                 }
