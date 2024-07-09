@@ -29,5 +29,5 @@ public partial class Ticket
 
     public bool? IsDelete { get; set; }
 
-    public virtual OrderDetail OrderDetail { get; set; } = new OrderDetail();
+    public virtual OrderDetail OrderDetail { get; set; } = null!;
 }

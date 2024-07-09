@@ -1,0 +1,74 @@
+﻿@page
+@model Events.RazorWebApp.Pages.TicketPage.CreateModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Ticket</h4>
+<hr />
+<div class="row" style="display: flex; flex-direction: row;">
+    <div class="col-md-8">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Ticket.Code" class="control-label"></label>
+                <input asp-for="Ticket.Code" class="form-control" />
+                <span asp-validation-for="Ticket.Code" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Ticket.Qrcode" class="control-label"></label>
+                <input asp-for="Ticket.Qrcode" class="form-control" />
+                <span asp-validation-for="Ticket.Qrcode" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Ticket.ParticipantName" class="control-label"></label>
+                <input asp-for="Ticket.ParticipantName" class="form-control" />
+                <span asp-validation-for="Ticket.ParticipantName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Ticket.ParticipantMail" class="control-label"></label>
+                <input type="email" asp-for="Ticket.ParticipantMail" class="form-control" />
+                <span asp-validation-for="Ticket.ParticipantMail" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Ticket.ParticipantPhone" class="control-label"></label>
+                <input type="number" asp-for="Ticket.ParticipantPhone" class="form-control" />
+                <span asp-validation-for="Ticket.ParticipantPhone" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Ticket.SpecialNote" class="control-label"></label>
+                <input value=" " asp-for="Ticket.SpecialNote" class="form-control" />
+                <span asp-validation-for="Ticket.SpecialNote" class="text-danger"></span> 
+            </div>
+            <div class="form-group">
+                <label asp-for="Ticket.TicketType" class="control-label"></label>
+                <select asp-for="Ticket.TicketType" asp-items="Model.TicketTypes" class="form-control">
+                    <option value="" disabled selected>-- Select Ticket Type --</option>
+                </select>
+                <span asp-validation-for="Ticket.TicketType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Ticket.OrderDetailId" class="control-label"></label>
+                <input asp-for="Ticket.OrderDetailId" class ="form-control" asp-items="ViewBag.OrderDetailId"/>
+                <span asp-validation-for="Ticket.OrderDetailId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+    <div style="color: red" class="col-md-2"> 
+        @Html.DisplayFor(model => model.Mess)
+        </div>
+</div>
+
+<div>
+    <a asp-page="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
