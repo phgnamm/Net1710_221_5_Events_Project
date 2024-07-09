@@ -6,13 +6,35 @@
 }
 
 <h1>Index</h1>
+<form method="get" class="search-form">
+    <div class="form-group search-row">
+        <label for="SearchField">Search by:</label>
+        <select id="SearchField" name="SearchField" class="form-control search-field" asp-for="SearchField">
+            <option value="Code">Code</option>
+            <option value="PartName">Participant name</option>
+            <option value="PartMail">Participant mail</option>
+            <option value="PartPhone">Participant phone</option>
+            <option value="EventName">Event name</option>
+        </select>
+        <label for="SearchTerm" class="search-term-label">Search Term:</label>
+        <input type="text" id="SearchTerm" name="SearchTerm" class="form-control search-term" asp-for="SearchTerm" />
+    </div>
+    <div class="form-group search-row">
+        <label for="StartDate">Ticket Created From:</label>
+        <input type="date" id="StartDate" name="StartDate" class="form-control" asp-for="StartDate" />
+        <label for="EndDate" class="end-date-label">To:</label>
+        <input type="date" id="EndDate" name="EndDate" class="form-control" asp-for="EndDate" />
+    </div>
+    <button type="submit" class="btn btn-primary">Search</button>
+</form>
 
 <p>
     <a asp-page="Create">Create New</a>
-</p>
+</p> 
 <table class="table">
     <thead>
         <tr>
+            <
             <th>
                 @Html.DisplayNameFor(model => model.Ticket[0].Code)
             </th>
@@ -41,10 +63,7 @@
                 @Html.DisplayNameFor(model => model.Ticket[0].Status)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Ticket[0].IsDelete)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Ticket[0].OrderDetail.Event.Name)
+                Event @Html.DisplayNameFor(model => model.Ticket[0].OrderDetail.Event.Name)
             </th>
             <th></th>
         </tr>
@@ -78,9 +97,6 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Status)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsDelete)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.OrderDetail.Event.Name)

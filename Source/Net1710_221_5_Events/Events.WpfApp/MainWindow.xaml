@@ -13,6 +13,7 @@
                 <MenuItem Header="Order" IsCheckable="False" FontSize="12" Click="Open_wOrder_Click" />
                 <MenuItem Header="OrderDetail" IsCheckable="False" FontSize="12" Click="Open_wOrderDetail_Click" />
                 <MenuItem Header="Customer" IsCheckable="False" FontSize="12" Click="Open_wCustomer_Click" />
+                <MenuItem Header="Ticket" IsCheckable="False" FontSize="12" Click="Open_wTicket_Click" />
             </MenuItem>
         </Menu>
     </Grid>
