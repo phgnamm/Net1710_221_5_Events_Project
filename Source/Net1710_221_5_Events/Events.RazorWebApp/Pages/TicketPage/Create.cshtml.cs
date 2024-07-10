@@ -13,7 +13,7 @@ namespace Events.RazorWebApp.Pages.TicketPage
 {
     public class CreateModel : PageModel
     {
-        private readonly ITicketlBusiness _ticketlBusiness = new TicketBusiness();
+        private readonly ITicketBusiness _ticketlBusiness = new TicketBusiness();
         private readonly IOrderDetailBusiness _orderDetailBusiness = new OrderDetailBusiness();
 
         public List<SelectListItem> TicketTypes { get; set; }

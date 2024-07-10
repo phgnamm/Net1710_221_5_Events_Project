@@ -109,3 +109,116 @@
 }
     </tbody>
 </table>
+
+<div class="pagination">
+    <ul class="pagination-list">
+        <li>
+            @if (Model.HasPreviousPage)
+            {
+                <a asp-page="./Index" asp-route-pageIndex="@(Model.PageIndex - 1)" class="pagination-button">Previous</a>
+            }
+        </li>
+        <li class="pagination-numbers">
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <a asp-page="./Index" asp-route-pageIndex="@i" class="@(i == Model.PageIndex ? "active" : "")">@i</a>
+            }
+        </li>
+        <li>
+            @if (Model.HasNextPage)
+            {
+                <a asp-page="./Index" asp-route-pageIndex="@(Model.PageIndex + 1)" class="pagination-button">Next</a>
+            }
+        </li>
+    </ul>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.7/signalr.min.js"></script>
+<script type="text/javascript">
+    const connection = new signalR.HubConnectionBuilder().withUrl("/ticketHub").build();
+
+    connection.on("TicketUpdated", function () {
+        location.reload();
+    });
+
+    connection.start().catch(function (err) {
+        return console.error(err.toString());
+    });
+</script>
+
+@* style button and search bar *@
+<style>
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
+    }
+
+    .pagination-list {
+        list-style: none;
+        display: flex;
+        padding: 0;
+        gap: 10px;
+    }
+
+        .pagination-list li {
+            display: inline;
+        }
+
+    .pagination-button {
+        background-color: #007bff;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 5px;
+        text-decoration: none;
+    }
+
+        .pagination-button:hover {
+            background-color: #0056b3;
+        }
+
+    .pagination-numbers a {
+        padding: 5px 10px;
+        text-decoration: none;
+        color: black;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+    }
+
+    .pagination-numbers .active {
+        background-color: #007bff;
+        color: white;
+        border-color: #007bff;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .search-form {
+        margin-bottom: 20px;
+    }
+
+    .search-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .search-field {
+        width: 150px;
+    }
+
+    .search-term {
+        flex-grow: 1;
+    }
+
+    .search-term-label {
+        margin-left: auto;
+    }
+
+    .end-date-label {
+        margin-left: auto;
+    }
+</style>

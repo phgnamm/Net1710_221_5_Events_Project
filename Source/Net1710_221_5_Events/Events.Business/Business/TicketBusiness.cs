@@ -11,7 +11,7 @@ using System.Net.Sockets;
 
 namespace Events.Business.Business
 {
-    public interface ITicketlBusiness
+    public interface ITicketBusiness
     {
         Task<IEventsAppResult> CreateTicketAsync(Ticket ticket);
         Task<IEventsAppResult> GetTicketByIdAsync(int ticketId);
@@ -20,7 +20,7 @@ namespace Events.Business.Business
         Task<IEventsAppResult> DeleteTicketAsync(int ticketId);
     }
 
-    public class TicketBusiness : ITicketlBusiness
+    public class TicketBusiness : ITicketBusiness
     {
         private readonly UnitOfWork _unitOfWork;
         private readonly OrderDetailBusiness _orderDetailBusiness;
