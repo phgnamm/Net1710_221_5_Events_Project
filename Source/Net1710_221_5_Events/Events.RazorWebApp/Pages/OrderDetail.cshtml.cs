@@ -55,7 +55,7 @@ namespace Events.RazorWebApp.Pages
         private List<OrderDetail> GetOrderDetails()
         {
             var orderDetailResult = _orderDetailBusiness.GetAllOrderDetailsAsync().Result;
-            return (List<OrderDetail>)orderDetailResult.Data;
+            return orderDetailResult?.Data as List<OrderDetail> ?? new List<OrderDetail>();
         }
 
         private List<OrderDetail> GetPaginatedOrderDetails(int pageIndex, int pageSize)

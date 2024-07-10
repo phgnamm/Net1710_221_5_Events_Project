@@ -187,7 +187,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-REATE TABLE [dbo].[Ticket](
+CREATE TABLE [dbo].[Ticket](
 	[TicketId] [int] IDENTITY(1,1) NOT NULL,
 	[Code] [nvarchar](50) NOT NULL,
 	[QRCode] [nvarchar](max) NOT NULL,
