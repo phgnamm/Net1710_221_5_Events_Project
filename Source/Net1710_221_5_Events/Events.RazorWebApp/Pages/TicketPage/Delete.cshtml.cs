@@ -13,7 +13,7 @@ namespace Events.RazorWebApp.Pages.TicketPage
 {
     public class DeleteModel : PageModel
     {
-        private readonly ITicketlBusiness _ticketlBusiness = new TicketBusiness();
+        private readonly ITicketBusiness _ticketBusiness = new TicketBusiness();
 
         public DeleteModel()
         {
@@ -29,7 +29,7 @@ namespace Events.RazorWebApp.Pages.TicketPage
                 return NotFound();
             }
 
-            var ticket = await _ticketlBusiness.GetTicketByIdAsync((int) id);
+            var ticket = await _ticketBusiness.GetTicketByIdAsync((int) id);
 
             if (ticket == null)
             {
@@ -49,7 +49,7 @@ namespace Events.RazorWebApp.Pages.TicketPage
                 return NotFound();
             }
 
-            var result = await _ticketlBusiness.DeleteTicketAsync((int) id);
+            var result = await _ticketBusiness.DeleteTicketAsync((int) id);
             if (result.Status == Const.SUCCESS_DELETE_CODE)
             {
                 return RedirectToPage("./Index");

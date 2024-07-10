@@ -12,7 +12,7 @@ namespace Events.RazorWebApp.Pages.TicketPage
 {
     public class DetailsModel : PageModel
     {
-        private readonly ITicketlBusiness _ticketBusiness = new TicketBusiness();
+        private readonly ITicketBusiness _ticketBusiness = new TicketBusiness();
 
         public DetailsModel()
         {

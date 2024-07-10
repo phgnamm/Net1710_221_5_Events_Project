@@ -8,16 +8,16 @@ using Microsoft.EntityFrameworkCore;
 using Events.Data.Models;
 using Events.Business.Business;
 using Events.Common;
-using static NuGet.Packaging.PackagingConstants;
 
 namespace Events.RazorWebApp.Pages.TicketPage
 {
     public class IndexModel : PageModel
     {
-        private readonly ITicketlBusiness _ticketbusiness = new TicketBusiness();
+        private readonly ITicketBusiness _ticketbusiness = new TicketBusiness();
 
         public IndexModel()
         {
+
         }
 
         public IList<Ticket> Ticket { get;set; } = default!;
@@ -41,8 +41,9 @@ namespace Events.RazorWebApp.Pages.TicketPage
         [BindProperty(SupportsGet = true)]
         public DateTime? EndDate { get; set; }
 
-        public async Task OnGetAsync()
+        public async Task OnGetAsync(int pageIndex = 1)
         {
+            PageIndex = pageIndex;
             var data = await _ticketbusiness.GetAllTicketsAsync();
             if (data.Status == Const.SUCCESS_READ_CODE && data.Data != null)
             {
