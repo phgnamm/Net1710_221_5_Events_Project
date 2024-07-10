@@ -49,14 +49,44 @@ public partial class Net17102215EventsContext : DbContext
     {
         modelBuilder.Entity<Company>(entity =>
         {
-            entity.ToTable("Company");
+            modelBuilder.Entity<Company>(entity =>
+            {
+                entity.ToTable("Company");
 
-            entity.Property(e => e.Address).HasMaxLength(500);
-            entity.Property(e => e.BusinessSector).HasMaxLength(100);
-            entity.Property(e => e.Name).HasMaxLength(150);
-            entity.Property(e => e.TaxesId)
-                .HasMaxLength(50)
-                .IsUnicode(false);
+                entity.HasKey(e => e.CompanyId);
+
+                entity.Property(e => e.Address)
+                    .IsRequired()
+                    .HasMaxLength(500);
+
+                entity.Property(e => e.BusinessSector)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(150);
+
+                entity.Property(e => e.CompanyPhone)
+                    .IsRequired()
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.TaxesId)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.City)
+                    .IsRequired()
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.Country)
+                    .IsRequired()
+                    .HasMaxLength(250);
+
+               
+            });
         });
 
         modelBuilder.Entity<Customer>(entity =>
