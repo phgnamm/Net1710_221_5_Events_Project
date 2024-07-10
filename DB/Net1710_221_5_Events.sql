@@ -83,9 +83,14 @@ GO
 CREATE TABLE [dbo].[Company](
 	[CompanyId] [int] IDENTITY(1,1) NOT NULL,
 	[Name] [nvarchar](150) NOT NULL,
+	[CompanyPhone] [varchar](10) NOT NULL,
 	[BusinessSector] [nvarchar](100) NOT NULL,
 	[TaxesId] [varchar](50) NOT NULL,
 	[Address] [nvarchar](500) NOT NULL,
+	[City] [nvarchar](250) NOT NULL,
+	[Country] [nvarchar](250) NOT NULL,
+	[CreatedDate] [datetime2](7) NOT NULL,
+	[UpdatedDate] [datetime2](7) NOT NULL,
  CONSTRAINT [PK_Company] PRIMARY KEY CLUSTERED 
 (
 	[CompanyId] ASC
