@@ -94,6 +94,7 @@ namespace Events.Business.Business
                     {
                         Status = Const.WARNING_NO_DATA_CODE,
                         Message = Const.WARNING_NO_DATA__MSG,
+                        Data = new List<Event>()
                     };
                 }
                 return new EventsAppResult

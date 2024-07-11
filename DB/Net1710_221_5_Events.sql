@@ -199,7 +199,6 @@ CREATE TABLE [dbo].[Ticket](
 	[OrderDetailId] [int] NOT NULL,
 	[CreatedDate] [datetime2](7) NOT NULL,
 	[Status] [nvarchar](max) NOT NULL,
-	[IsDelete] [bit] NULL,
  CONSTRAINT [PK_Ticket] PRIMARY KEY CLUSTERED 
 (
 	[TicketId] ASC
