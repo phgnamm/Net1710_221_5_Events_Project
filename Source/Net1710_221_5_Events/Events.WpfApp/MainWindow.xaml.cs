@@ -54,5 +54,12 @@ namespace Events.WpfApp
             p.Owner = this;
             p.Show();
         }
+        private void Open_wCompany_Click(object sender, RoutedEventArgs e)
+        {
+            var p = new wCompany();
+            p.Owner = this;
+            p.Show();
+        }
+        
     }
 }
