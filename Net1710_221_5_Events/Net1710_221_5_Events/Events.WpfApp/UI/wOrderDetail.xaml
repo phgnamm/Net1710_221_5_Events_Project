@@ -1,0 +1,73 @@
+﻿<Window x:Class="Events.WpfApp.UI.wOrderDetail"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Events.WpfApp.UI"
+        mc:Ignorable="d"
+        Title="wOrderDetail" Height="450" Width="1106">
+    <Grid>
+        <StackPanel Orientation="Vertical">
+            <GroupBox Header="Order Detail Form" Margin="10" Height="158">
+                <Grid Height="130">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="97"/>
+                        <ColumnDefinition Width="183"/>
+                        <ColumnDefinition Width="80"/>
+                        <ColumnDefinition Width="200"/>
+                        <ColumnDefinition Width="80"/>
+                        <ColumnDefinition Width="200"/>
+                        <ColumnDefinition Width="80"/>
+                        <ColumnDefinition Width="200"/>
+                        <ColumnDefinition Width="0*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Label Grid.Row="0" Grid.Column="0" Content="Event Name" VerticalAlignment="Center" Height="26"/>
+                    <ComboBox x:Name="cmbEventName" Grid.Row="0" Grid.Column="1" DisplayMemberPath="Name" SelectedValuePath="EventId" Margin="5,5,5,5"/>
+
+                    <Label Grid.Row="1" Grid.Column="0" Content="Quantity" VerticalAlignment="Center" Height="28" Margin="0,0,1,0"/>
+                    <TextBox x:Name="txtQuantity" Grid.Row="1" Grid.Column="1" Text="{Binding Path=Quantity, Mode=TwoWay}" Margin="5,5,5,5"/>
+
+                    <Label Grid.Row="2" Grid.Column="0" Content="Price" VerticalAlignment="Center" Height="26"/>
+                    <TextBox x:Name="txtPrice" Grid.Row="2" Grid.Column="1" Text="{Binding Path=Price, Mode=TwoWay}" Margin="5,5,5,5"/>
+
+                    <Label Grid.Row="3" Grid.Column="0" Content="Order Code" VerticalAlignment="Center" Height="26"/>
+                    <ComboBox x:Name="cmbOrderCode" Grid.Row="3" Grid.Column="1" DisplayMemberPath="Code" SelectedValuePath="OrderId" Margin="5,5,5,5"/>
+                </Grid>
+            </GroupBox>
+            <StackPanel Height="40" Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button x:Name="ButtonSave" Content="Save" Height="30" Width="80" Click="ButtonSave_Click"/>
+                <Button x:Name="ButtonCancel" Content="Cancel" Height="30" Width="80" Click="ButtonCancel_Click"/>
+            </StackPanel>
+            <StackPanel Height="210">
+                <DataGrid x:Name="grdCurrency" AutoGenerateColumns="False" ItemsSource="{Binding OrderDetails}" CanUserAddRows="False" Height="200" Margin="10" MouseDoubleClick="grdCurrency_MouseDouble_Click" SelectionMode="Single" SelectionUnit="FullRow">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="Price" Binding="{Binding Price}" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="Event Name" Binding="{Binding Event.Name}" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="Event Location" Binding="{Binding Event.Location}" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="Event Start Date" Binding="{Binding Event.StartDate}" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="Event End Date" Binding="{Binding Event.EndDate}" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="Order Code" Binding="{Binding Order.Code}" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="Payment Status" Binding="{Binding Order.PaymentStatus}" IsReadOnly="True"/>
+                        <DataGridTemplateColumn Width="50">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="X" x:Name="ButtonDelete" CommandParameter="{Binding Path=OrderDetailId}" Click="grdCurrency_ButtonDelete_Click"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                    </DataGrid.Columns>
+                </DataGrid>
+
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>
