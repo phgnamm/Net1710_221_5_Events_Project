@@ -15,26 +15,18 @@
         <div>
             <label class="control-label">Search by</label>
             <div class="row col-10">
-                <div class="col-2">
-                    <select class="form-select" asp-for="SearchType">
-                        <option value="name">Name</option>
-                        <option value="phoneNumber">PhoneNumber</option>
-                        <option value="email">Email</option>
-                        <option value="city">City</option>
-                        <option value="country">Country</option>
-                    </select>
-                </div>
-                <div class="col-8 row">
-                    <div class="col-5">
-                        <input class="form-control" style="margin-right: 10px" asp-for="Search" />
+                <div class="col-10 row">
+                    <div class="col-8">
+                        <input class="form-control" asp-for="Search" style="margin-right: 10px" placeholder="Enter search criteria e.g. name:A, phoneNumber:B, email:C" />
                     </div>
-                    <div class="col-3">
+                    <div class="col-6">
                         <input type="submit" value="Search" class="btn btn-primary col-6" />
                     </div>
                 </div>
             </div>
         </div>
     </form>
+
 </div>
 <table class="table">
     <thead>
