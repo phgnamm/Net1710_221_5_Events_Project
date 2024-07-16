@@ -190,6 +190,7 @@ namespace Events.Business.Business
                 {
                     Status = Const.SUCCESS_UPDATE_CODE,
                     Message = Const.SUCCESS_UPDATE_MSG,
+                    Data = existCompany
                 };
             }
             catch (Exception ex)

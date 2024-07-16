@@ -24,11 +24,6 @@ namespace Events.RazorWebApp.Pages.TicketPage
 
         public IActionResult OnGet()
         {
-            TicketTypes = new List<SelectListItem>
-            {
-                new SelectListItem { Value = "VIP", Text = "VIP" },
-                new SelectListItem { Value = "Regular", Text = "Regular" }
-            };
             return Page();
         }
 

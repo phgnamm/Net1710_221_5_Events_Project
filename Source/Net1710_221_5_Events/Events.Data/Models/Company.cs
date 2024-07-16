@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Events.Data.Models;
 
-public partial class Company
+public partial class Company 
 {
     public int CompanyId { get; set; }
     public string Name { get; set; }
