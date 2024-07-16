@@ -47,6 +47,8 @@
                 <label asp-for="Ticket.TicketType" class="control-label"></label>
                 <select asp-for="Ticket.TicketType" asp-items="Model.TicketTypes" class="form-control">
                     <option value="" disabled selected>-- Select Ticket Type --</option>
+                    <option value="VIP">VIP</option>
+                    <option value="Regular">Regular</option>
                 </select>
                 <span asp-validation-for="Ticket.TicketType" class="text-danger"></span>
             </div>
