@@ -37,28 +37,10 @@ namespace Events.RazorWebApp.Pages.CustomerPage
             {
                 var customers = result.Data as List<Customer>;
                 Customer = customers;
-                if(!string.IsNullOrEmpty(SearchType) && !string.IsNullOrEmpty(Search))
+
+                if (!string.IsNullOrEmpty(Search))
                 {
-                    if(SearchType == "name")
-                    {
-                        customers = customers.Where(e => e.FullName.Contains(Search, StringComparison.OrdinalIgnoreCase)).ToList();
-                    } 
-                    else if(SearchType == "phoneNumber")
-                    {
-                        customers = customers.Where(e => e.PhoneNumber.Contains(Search, StringComparison.OrdinalIgnoreCase)).ToList();
-                    }
-                    else if (SearchType == "email")
-                    {
-                        customers = customers.Where(e => e.Email.Contains(Search, StringComparison.OrdinalIgnoreCase)).ToList();
-                    }
-                    else if (SearchType == "city")
-                    {
-                        customers = customers.Where(e => e.City.Contains(Search, StringComparison.OrdinalIgnoreCase)).ToList();
-                    }
-                    else if (SearchType == "country")
-                    {
-                        customers = customers.Where(e => e.Country.Contains(Search, StringComparison.OrdinalIgnoreCase)).ToList();
-                    }
+                    customers = ApplySearchCriteria(customers, Search);
                 }
 
                 Pagination.TotalPages = (int)Math.Ceiling(customers.Count / (double)Pagination.PageSize);
@@ -72,5 +54,25 @@ namespace Events.RazorWebApp.Pages.CustomerPage
                 Customer = new List<Customer>();
             }
         }
+
+        private List<Customer> ApplySearchCriteria(List<Customer> customers, string search)
+        {
+            var criteria = search.Split(',').Select(c => c.Trim()).Where(c => !string.IsNullOrEmpty(c)).ToList();
+
+            if (criteria.Count > 0)
+            {
+                customers = customers.Where(e =>
+                    (criteria.Count > 0 && e.FullName.Contains(criteria[0], StringComparison.OrdinalIgnoreCase)) ||
+                    (criteria.Count > 1 && e.PhoneNumber.Contains(criteria[1], StringComparison.OrdinalIgnoreCase)) ||
+                    (criteria.Count > 2 && e.Email.Contains(criteria[2], StringComparison.OrdinalIgnoreCase)) ||
+                    (criteria.Count > 3 && e.City.Contains(criteria[3], StringComparison.OrdinalIgnoreCase)) ||
+                    (criteria.Count > 4 && e.Country.Contains(criteria[4], StringComparison.OrdinalIgnoreCase))
+                ).ToList();
+            }
+
+            return customers;
+        }
+
+
     }
 }
