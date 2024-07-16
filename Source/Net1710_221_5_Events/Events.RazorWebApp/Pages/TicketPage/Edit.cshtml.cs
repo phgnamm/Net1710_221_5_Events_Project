@@ -18,17 +18,6 @@ namespace Events.RazorWebApp.Pages.TicketPage
 
         public EditModel()
         {
-            TicketTypes = new List<SelectListItem>
-            {
-                new SelectListItem { Value = "VIP", Text = "VIP" },
-                new SelectListItem { Value = "Regular", Text = "Regular" }
-            };
-            Statuses = new List<SelectListItem>
-            {
-                new SelectListItem {Value = "Active", Text = "Active"},
-                new SelectListItem {Value = "Checked in", Text ="Checked in"},
-                new SelectListItem {Value = "Inactive", Text = "Inactive"}
-            };
         }
 
         [BindProperty]

@@ -7,17 +7,18 @@
 
 <h1>Index</h1>
 <form method="get" class="search-form">
+    <label class="search-term-label">Search:</label>
     <div class="form-group search-row">
-        <label for="SearchField">Search by:</label>
-        <select id="SearchField" name="SearchField" class="form-control search-field" asp-for="SearchField">
-            <option value="Code">Code</option>
-            <option value="PartName">Participant name</option>
-            <option value="PartMail">Participant mail</option>
-            <option value="PartPhone">Participant phone</option>
-            <option value="EventName">Event name</option>
-        </select>
-        <label for="SearchTerm" class="search-term-label">Search Term:</label>
-        <input type="text" id="SearchTerm" name="SearchTerm" class="form-control search-term" asp-for="SearchTerm" />
+        <label class="search-term-label">Code:</label>
+        <input type="text" name="SearchCode" class="form-control search-term" asp-for="SearchCode" />
+        <label class="search-term-label">Participant Name:</label>
+        <input type="text" id="SearchPartName" name="SearchPartName" class="form-control search-term" asp-for="SearchPartName" />
+        <label class="search-term-label">Participant Mail:</label>
+        <input type="text" id="SearchPartMail" name="SearchPartMail" class="form-control search-term" asp-for="SearchPartMail" />
+        <label class="search-term-label">Participant Phone:</label>
+        <input type="text" id="SearchPartPhone" name="SearchPartPhone" class="form-control search-term" asp-for="SearchPartPhone" />
+        <label class="search-term-label">Event Name:</label>
+        <input type="text" id="SearchEventName" name="SearchEventName" class="form-control search-term" asp-for="SearchEventName" />
     </div>
     <div class="form-group search-row">
         <label for="StartDate">Ticket Created From:</label>

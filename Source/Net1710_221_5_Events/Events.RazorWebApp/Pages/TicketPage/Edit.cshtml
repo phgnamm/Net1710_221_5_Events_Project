@@ -48,6 +48,8 @@
                 <label asp-for="Ticket.TicketType" class="control-label"></label>
                 <select asp-for="Ticket.TicketType" asp-items="Model.TicketTypes" class="form-control">
                     <option value="" disabled selected>-- Select Ticket Type --</option>
+                    <option value="VIP">VIP</option>
+                    <option value="Regular">Regular</option>
                 </select>
                 <span asp-validation-for="Ticket.TicketType" class="text-danger"></span>
             </div>
@@ -55,6 +57,9 @@
                 <label asp-for="Ticket.Status" class="control-label"></label>
                 <select asp-for="Ticket.Status" asp-items="Model.Statuses" class="form-control">
                     <option value="" disabled selected>-- Select Status --</option>
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                    <option value="Checked in">Checked in</option>
                 </select>
                 <span asp-validation-for="Ticket.Status" class="text-danger"></span>
             </div>
