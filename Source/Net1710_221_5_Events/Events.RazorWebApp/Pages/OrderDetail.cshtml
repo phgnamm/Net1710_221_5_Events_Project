@@ -174,15 +174,15 @@
                     <div class="row">
                         <div class="col-md-6">
                             <label for="quantity">Quantity</label>
-                            <input asp-for="OrderDetail.Quantity" class="form-control" />
+                            <input asp-for="OrderDetail.Quantity" class="form-control" required min="1" />
                         </div>
                         <div class="col-md-6">
                             <label for="price">Price</label>
-                            <input asp-for="OrderDetail.Price" class="form-control" />
+                            <input asp-for="OrderDetail.Price" class="form-control" required min="1" />
                         </div>
                         <div class="col-md-6">
                             <label for="event">Events</label>
-                            <select asp-for="OrderDetail.EventId" id="event" class="form-control">
+                            <select asp-for="OrderDetail.EventId" id="event" class="form-control" required>
                                 <option value="">-- Select --</option>
                                 @foreach (var item in Model.Events)
                                 {
@@ -192,7 +192,7 @@
                         </div>
                         <div class="col-md-6">
                             <label for="orderCode">Order Code</label>
-                            <select asp-for="OrderDetail.OrderId" id="orderCode" class="form-control">
+                            <select asp-for="OrderDetail.OrderId" id="orderCode" class="form-control" required>
                                 <option value="">-- Select --</option>
                                 @foreach (var item in Model.Orders)
                                 {
@@ -276,15 +276,15 @@
                     <div class="row">
                         <div class="col-md-6">
                             <label for="editQuantity">Quantity</label>
-                            <input asp-for="OrderDetail.Quantity" id="editQuantity" class="form-control" />
+                            <input asp-for="OrderDetail.Quantity" id="editQuantity" class="form-control" required min="1"/>
                         </div>
                         <div class="col-md-6">
                             <label for="editPrice">Price</label>
-                            <input asp-for="OrderDetail.Price" id="editPrice" class="form-control" />
+                            <input asp-for="OrderDetail.Price" id="editPrice" class="form-control" required min="1" />
                         </div>
                         <div class="col-md-6">
                             <label for="editEvent">Events</label>
-                            <select asp-for="OrderDetail.EventId" id="editEvent" class="form-control">
+                            <select asp-for="OrderDetail.EventId" id="editEvent" class="form-control" required>
                                 @foreach (var item in Model.Events)
                                 {
                                     <option value="@item.EventId">@item.Name</option>
@@ -310,6 +310,7 @@
         function add() {
             $('#orderDetailModal').modal('show');
         }
+
         function openEditModal(orderDetailId, quantity, price, orderID, eventID) {
             $('#editOrderDetailModal').modal('show');
 
@@ -320,6 +321,7 @@
             $('#idOrder').val(orderID);
             $('#editEvent').val(eventID);
         }
+
         function openDetailModal(code, descrip, ticket, total, status, date, method) {
             $('#detailModal').modal('show');
 
@@ -333,12 +335,29 @@
             $('#oPM').val(method);
         }
 
-        //Confirm delete
         $(document).ready(function () {
             var message = '@message';
             if (message) {
                 alert(message);
             }
+
+            // Validate Quantity and Price
+            $('form').on('submit', function (e) {
+                var quantity = parseFloat($(this).find('input[name="OrderDetail.Quantity"]').val());
+                var price = parseFloat($(this).find('input[name="OrderDetail.Price"]').val());
+
+                if (quantity <= 0) {
+                    alert('Quantity must be greater than 0');
+                    e.preventDefault();
+                }
+
+                if (price <= 0) {
+                    alert('Price must be greater than 0');
+                    e.preventDefault();
+                }
+            });
         });
     </script>
 }
+
+
