@@ -174,11 +174,11 @@
                     <div class="row">
                         <div class="col-md-6">
                             <label for="quantity">Quantity</label>
-                            <input asp-for="OrderDetail.Quantity" class="form-control" required min="1" />
+                            <input asp-for="OrderDetail.Quantity" class="form-control" type="number" required min="1" />
                         </div>
                         <div class="col-md-6">
                             <label for="price">Price</label>
-                            <input asp-for="OrderDetail.Price" class="form-control" required min="1" />
+                            <input asp-for="OrderDetail.Price" class="form-control" type="number" required min="1" />
                         </div>
                         <div class="col-md-6">
                             <label for="event">Events</label>
@@ -276,11 +276,11 @@
                     <div class="row">
                         <div class="col-md-6">
                             <label for="editQuantity">Quantity</label>
-                            <input asp-for="OrderDetail.Quantity" id="editQuantity" class="form-control" required min="1"/>
+                            <input asp-for="OrderDetail.Quantity" id="editQuantity" class="form-control" type="number" required min="1" />
                         </div>
                         <div class="col-md-6">
                             <label for="editPrice">Price</label>
-                            <input asp-for="OrderDetail.Price" id="editPrice" class="form-control" required min="1" />
+                            <input asp-for="OrderDetail.Price" id="editPrice" class="form-control" type="number" required min="1" />
                         </div>
                         <div class="col-md-6">
                             <label for="editEvent">Events</label>
