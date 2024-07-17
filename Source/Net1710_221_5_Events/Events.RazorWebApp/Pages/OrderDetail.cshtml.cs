@@ -134,10 +134,10 @@ namespace Events.RazorWebApp.Pages
             }
             return new List<Order>();
         }
-        public IActionResult OnPostSearch(string paymentMethod, decimal? price, DateTime? startDate, string nameEvent, int pageIndex = 1)
+        public IActionResult OnPostSearch(string paymentMethod, decimal? priceFrom, decimal? priceTo, DateTime? startDate, string nameEvent, int pageIndex = 1)
         {
             PageIndex = pageIndex;
-            OrderDetails = GetFilteredOrderDetails(paymentMethod, price, startDate, nameEvent);
+            OrderDetails = GetFilteredOrderDetails(paymentMethod, priceFrom, priceTo,startDate, nameEvent);
             TotalPages = (int)Math.Ceiling(OrderDetails.Count / (double)PageSize);
             OrderDetails = OrderDetails.Skip((PageIndex - 1) * PageSize).Take(PageSize).ToList();
 
@@ -146,7 +146,7 @@ namespace Events.RazorWebApp.Pages
             return Page();
         }
 
-        private List<OrderDetail> GetFilteredOrderDetails(string paymentMethod, decimal? price, DateTime? startDate, string nameEvent)
+        private List<OrderDetail> GetFilteredOrderDetails(string paymentMethod, decimal? priceFrom, decimal? priceTo, DateTime? startDate, string nameEvent)
         {
             var orderDetails = _orderDetailBusiness.GetAllOrderDetailsAsync().Result.Data as List<OrderDetail>;
 
@@ -158,9 +158,13 @@ namespace Events.RazorWebApp.Pages
             {
                 orderDetails = orderDetails.Where(od => od.Event.Name == nameEvent).ToList();
             }
-            if (price != null)
+            if (priceFrom != null)
             {
-                orderDetails = orderDetails.Where(od => od.Price == price).ToList();
+                orderDetails = orderDetails.Where(od => od.Price >= priceFrom).ToList();
+            }
+            if (priceTo != null)
+            {
+                orderDetails = orderDetails.Where(od => od.Price <= priceTo).ToList();
             }
             if (startDate != null)
             {
